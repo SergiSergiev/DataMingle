@@ -1,7 +1,8 @@
 import folium
 from folium import plugins
 
-def vizualization(data:list, file_name:str):
+
+def vizualization(data, file_name):
 
     heatmap_map = folium.Map(data[0], zoom_start=20)
 

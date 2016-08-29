@@ -10,7 +10,7 @@ KEY_SEQ_CTL = 4
 
 freq_in_mhz = 2462
 
-def create_time_frames (data_table:list) -> list:
+def create_time_frames (data_table):
     arranged_table = []
     routers_coordinates = load_sensor_locations(routers_number)
 
@@ -253,7 +253,8 @@ def report(time_frames_records):
     % of 6: {:.4f} %
     '''.format(total, count_1,count_2, count_3, count_4, count_5, count_6, count_1/total*100, count_2/total*100, count_3/total*100, count_4/total*100, count_5/total*100,count_6/total*100))
 
-def create_list(data_table:tuple, approx_in_sec) -> list :
+
+def create_list(data_table, approx_in_sec):
 
     sorted_table = []
     for n in data_table:
@@ -269,8 +270,8 @@ def create_list(data_table:tuple, approx_in_sec) -> list :
         sorted_table.append((source,  date_time, seq_ctl, sensor_id, rssi ))
     return sorted_table
 
-def compute_distance (level_in_db)-> int:
     meters = float()
+def compute_distance (level_in_db):
     '''
     free-space path loss (FSPL)
     For typical radio applications, it is common to find f measured in units of GHz and d in km, in which case the FSPL equation becomes

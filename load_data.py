@@ -13,7 +13,7 @@ import sys
 import pyhdb
 
 
-def load_data(sensor_installation:tuple, current_date, current_hour):
+def load_data(sensor_installation, current_date, current_hour):
     try:
         db_connection = pyhdb.connect(host="52.58.251.227", port=30015, user='SYSTEM', password='a5_hS3aZ#')
         db_cursor = db_connection.cursor()
@@ -41,7 +41,8 @@ def load_data(sensor_installation:tuple, current_date, current_hour):
         print(why)
         sys.exit(1)
 
-def load_sensor_locations(sensors:tuple) -> dict:
+
+def load_sensor_locations(sensors):
     try:
         db_connection = pyhdb.connect(host="52.58.251.227", port=30015, user='SYSTEM', password='a5_hS3aZ#')
         db_cursor = db_connection.cursor()
