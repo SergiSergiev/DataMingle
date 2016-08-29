@@ -70,16 +70,5 @@ def load_sensor_locations(sensors):
         print(why)
         sys.exit(1)
 
-#q = load_sensor_locations((56,57))
-# print(q)
-#print( q[56][1] )
-#p = q.keys()
-#print(p)
-
-if __name__ == '__main__':
-
-
-    parser = argparse.ArgumentParser(description='load-data')
-    args = parser.parse_args()
 
 

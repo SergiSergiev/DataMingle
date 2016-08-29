@@ -1,5 +1,8 @@
+import math
 from load_data import load_sensor_locations
 from triangulation import triangulation
+
+
 routers_number = (57,58,59,60,61,62,63,64,65,66)
 
 KEY_SOURCE = 0
@@ -270,7 +273,7 @@ def create_list(data_table, approx_in_sec):
         sorted_table.append((source,  date_time, seq_ctl, sensor_id, rssi ))
     return sorted_table
 
-    meters = float()
+
 def compute_distance (level_in_db):
     '''
     free-space path loss (FSPL)
@@ -284,7 +287,6 @@ def compute_distance (level_in_db):
     For d,f in kilometers and megahertz, respectively, the constant becomes  32.45 .
     https://en.wikipedia.org/wiki/Free-space_path_loss#Free-space_path_loss_in_decibels
     '''
- #   try:
     try:
         result = (27.55 - (20 * math.log10(freq_in_mhz)) + math.fabs(level_in_db)) / 20.0
         meters = math.pow(10, result)/1000
@@ -292,11 +294,3 @@ def compute_distance (level_in_db):
     except:
         meters = None
     return meters
-
-
-#    except:
- #       meters = None
-#    feet = meters * 3.2808
-
-# p = compute_distance(-60)
-# print(p)

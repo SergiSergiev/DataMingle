@@ -7,11 +7,11 @@ earthR = 6371
 
 def triangulation(LatA, LonA ,LatB ,LonB ,LatC , LonC ,DistA , DistB ,DistC ):
 
-#using authalic sphere
-#if using an ellipsoid this step is slightly different
-#Convert geodetic Lat/Long to ECEF xyz
-#   1. Convert Lat/Long to radians
-#   2. Convert Lat/Long(radians) to ECEF
+    #using authalic sphere
+    #if using an ellipsoid this step is slightly different
+    #Convert geodetic Lat/Long to ECEF xyz
+    #   1. Convert Lat/Long to radians
+    #   2. Convert Lat/Long(radians) to ECEF
 
     #print( '{},{},{},{},{},{},{},{},{}'.format(LatA, LonA ,LatB ,LonB ,LatC , LonC ,DistA , DistB ,DistC))
     xA = earthR *(math.cos(math.radians(LatA)) * math.cos(math.radians(LonA)))
