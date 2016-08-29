@@ -7,8 +7,6 @@
 #   table with columns SENSOR_INSTALLATION_ID, DATE_TIME, RSSI, SEQ_CTL, FRAME_TYPE, SUB_BITS
 #    ORDER BY SOURCE, DATE_TIME, SEQ_CTL
 
-import argparse
-import csv
 import socket
 import sys
 

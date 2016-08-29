@@ -1,8 +1,5 @@
-import math
-from triangulation import triangulation
-from pprint import pprint
-
 from load_data import load_sensor_locations
+from triangulation import triangulation
 routers_number = (57,58,59,60,61,62,63,64,65,66)
 
 KEY_SOURCE = 0

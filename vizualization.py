@@ -1,5 +1,4 @@
 import folium
-import csv
 from folium import plugins
 
 def vizualization(data:list, file_name:str):
