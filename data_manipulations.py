@@ -3,7 +3,6 @@ import math
 from load_data import load_sensor_locations
 from triangulation import triangulation
 
-routers_number = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
 
 KEY_SOURCE = 0
 KEY_SENSOR_ID = 1
@@ -14,7 +13,7 @@ KEY_SEQ_CTL = 4
 freq_in_mhz = 2462
 
 
-def create_time_frames(data_table):
+def create_time_frames(data_table, routers_number):
     arranged_table = []
     routers_coordinates = load_sensor_locations(routers_number)
 

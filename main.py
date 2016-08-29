@@ -21,7 +21,7 @@ name_file_outpup = 'bricolage'
 def main():
     db_records_sensor_date = load_data(routers_number, requested_date, hours)
     round_by_sec = create_list(db_records_sensor_date, approx_in_secs)
-    time_frames_records = create_time_frames(round_by_sec)
+    time_frames_records = create_time_frames(round_by_sec, routers_number)
     report(time_frames_records)
 
     counter = 0
