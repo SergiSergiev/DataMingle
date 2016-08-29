@@ -22,15 +22,16 @@ def load_data(sensor_installation, current_date, current_hour):
         sys.exit(1)
     try:
         current_day_time = current_date + ' ' + current_hour
-        #print(current_day_time)
+        # print(current_day_time)
         select_statement = '''
         SELECT SOURCE, SENSOR_INSTALLATION_ID, DATE_TIME, RSSI, SEQ_CTL, FRAME_TYPE, SUB_BITS
         FROM "SHOPUP"."me.shopup.data::data"
         WHERE SENSOR_INSTALLATION_ID IN {sensors} AND
         DATE_TIME BETWEEN '{current_day}'  AND '{current_day_time}'
-        ORDER BY SOURCE, DATE_TIME, SEQ_CTL '''.format (sensors = sensor_installation, current_day = current_date, current_day_time = current_day_time) #, [sensor_installation]
+        ORDER BY SOURCE, DATE_TIME, SEQ_CTL '''.format(sensors=sensor_installation, current_day=current_date,
+                                                       current_day_time=current_day_time)  # , [sensor_installation]
 
-        #print(select_statement)
+        # print(select_statement)
         db_cursor.execute(select_statement)
         selected_rows = db_cursor.fetchall()
         print('matching records count = {}'.format(len(selected_rows)))
@@ -57,18 +58,15 @@ def load_sensor_locations(sensors):
         WHERE ID IN {sensors}
         ORDER BY ID '''.format(sensors=sensors)
 
-        #print(select_statement)
+        # print(select_statement)
         db_cursor.execute(select_statement)
         selected_rows = db_cursor.fetchall()
-        result=dict()
-        for id,c1,c2 in selected_rows:
-            result [id] = (c1, c2)
-            #print(result)
+        result = dict()
+        for id, c1, c2 in selected_rows:
+            result[id] = (c1, c2)
+            # print(result)
         return result
 
     except pyhdb.exceptions.DatabaseError as why:
         print(why)
         sys.exit(1)
-
-
-
