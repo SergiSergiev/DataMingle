@@ -9,9 +9,9 @@
 import iso8601
 from pprint import pprint
 
-from heatmap.load_data import load_data, load_sensor_locations
-from heatmap.data_manipulations import create_time_frames, report, create_list
-from heatmap.vizualization import vizualization
+from load_data import load_data, load_sensor_locations
+from data_manipulations import create_time_frames, report, create_list
+from vizualization import vizualization
 
 from datetime import datetime
 hours = '23:59:59.000'

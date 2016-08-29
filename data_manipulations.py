@@ -1,8 +1,8 @@
 import math
-from heatmap.triangulation import triangulation
+from triangulation import triangulation
 from pprint import pprint
 
-from heatmap.load_data import load_sensor_locations
+from load_data import load_sensor_locations
 routers_number = (57,58,59,60,61,62,63,64,65,66)
 
 KEY_SOURCE = 0
