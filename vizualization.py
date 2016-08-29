@@ -1,7 +1,20 @@
 import folium
 import os
+import csv
 
 from folium import plugins
+
+
+def write_file(file_name, csv_out_lines):
+    with open(file_name, 'w', encoding='utf-8') as plain_out_file:
+        file_out_csv = csv.writer(plain_out_file, escapechar="'", quotechar="'", quoting=csv.QUOTE_NONE)
+
+        try:
+            for csv_line in csv_out_lines:
+                file_out_csv.writerow(csv_line)
+        except csv.Error as csv_err:
+            print(csv_err)
+
 
 def vizualization(data, file_name):
     heatmap_map = folium.Map(data[0], zoom_start=20)
@@ -14,3 +27,6 @@ def vizualization(data, file_name):
 
     path = os.path.join('maps', file_name + '.html')
     heatmap_map.save(path)
+
+    path = os.path.join('maps', file_name + '.csv')
+    write_file(path, data)

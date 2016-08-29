@@ -31,7 +31,6 @@ def main():
             counter += 1
             gathered_coordinates.append(n[-2:])
     print("Number of coordinates: {}".format(counter))
-    print(gathered_coordinates)
     file_name = name_file_outpup + '_' + requested_date + '_' + str(approx_in_secs)
     vizualization(gathered_coordinates, file_name)
 
