@@ -15,9 +15,9 @@ from heatmap.vizualization import vizualization
 
 from datetime import datetime
 hours = '23:59:59.000'
-approx_in_secs = 60
+approx_in_secs = 10
 routers_number = (57,58,59,60,61,62,63,64,65,66)
-requested_date = "2016-08-20"
+requested_date = "2016-08-21"
 name_file_outpup = 'bricolage'
 
 def main():
@@ -33,11 +33,12 @@ def main():
     counter = 0
     gathered_coordinates = list()
     for n in time_frames_records:
-        if n[19] != None:
+        if n[26] != None:
             counter +=1
             gathered_coordinates.append(n[-2:])
-    pprint(gathered_coordinates)
-    print(counter)
+    #pprint(gathered_coordinates)
+    print("Number of coordinates: {}".format(counter))
+    print(gathered_coordinates)
     file_name = name_file_outpup +'_' + requested_date + '_' +str(approx_in_secs)
     vizualization(gathered_coordinates, file_name)
 
