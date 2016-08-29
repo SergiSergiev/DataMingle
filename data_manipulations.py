@@ -213,7 +213,6 @@ def create_time_frames (data_table:list) -> list:
     return arranged_table
 
 
-
 def report(time_frames_records):
     total = len(time_frames_records)
     count_1 = 0

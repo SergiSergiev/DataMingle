@@ -8,7 +8,6 @@ def vizualization(data:list, file_name:str):
     hm = plugins.HeatMap(data)
     heatmap_map.add_children(hm)
     path = str ('maps\\' + file_name + '.html')
-    heatmap_map. save(path)
-    heatmap_map
+    heatmap_map.save(path)
 
 

@@ -8,7 +8,7 @@
 '''
 
 from data_manipulations import create_time_frames, report, create_list
-from load_data import load_data, load_sensor_locations
+from load_data import load_data
 from vizualization import vizualization
 
 hours = '23:59:59.000'
@@ -20,11 +20,8 @@ name_file_outpup = 'bricolage'
 
 def main():
     db_records_sensor_date = load_data(routers_number, requested_date, hours)
-    routers_coordinates = load_sensor_locations(routers_number)
     round_by_sec = create_list(db_records_sensor_date, approx_in_secs)
     time_frames_records = create_time_frames(round_by_sec)
-    #    pprint(routers_coordinates)
-    #    pprint(time_frames_records)
     report(time_frames_records)
 
     counter = 0
@@ -33,7 +30,6 @@ def main():
         if n[26] != None:
             counter += 1
             gathered_coordinates.append(n[-2:])
-    # pprint(gathered_coordinates)
     print("Number of coordinates: {}".format(counter))
     print(gathered_coordinates)
     file_name = name_file_outpup + '_' + requested_date + '_' + str(approx_in_secs)
