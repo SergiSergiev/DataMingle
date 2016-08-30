@@ -3,7 +3,7 @@ import math
 import numpy
 
 # assuming elevation = 0
-earthR = 6371
+earthR = 6371000
 
 
 def triangulation(LatA, LonA, LatB, LonB, LatC, LonC, DistA, DistB, DistC):
