@@ -22,11 +22,12 @@ TABLE_DB_TO_METERS = [0.009688, 0.010870, 0.012196, 0.013684, 0.015354, 0.017227
                       38.566653, 43.272496, 48.552540, 54.476845, 61.124026, 68.582285, 76.950590, 86.339982,
                       96.875053, 108.695597, 121.958466, 136.839649, 153.536611, 172.270911, 193.291142, 216.876228,
                       243.339130, 273.030995, 306.345815, 343.725658, 385.666531, 432.724965, 485.525396, 544.768455,
-                      611.240259, 685.822851, 769.505895, 863.399815]
+                      611.240259, 685.822851, 769.505895, 863.399815, 863.399815]
 
 
 def create_time_frames(data_table, routers_number):
     arranged_table = []
+    gathered_coordinates = []
     routers_coordinates = load_sensor_locations(routers_number)
 
     source = None
@@ -190,6 +191,10 @@ def create_time_frames(data_table, routers_number):
                                    router_id_6, rssi_6_average, router_6_counter, rssi_6_meters,
                                    coordinate_x, coordinate_y
                                    ))
+
+            if coordinate_x and coordinate_y:
+                gathered_coordinates.append((coordinate_x, coordinate_y))
+
             source = n[0]
             time_frame = n[1]
             router_id_1 = n[2]
@@ -224,7 +229,71 @@ def create_time_frames(data_table, routers_number):
             coordinate_x = None
             coordinate_y = None
 
-    return arranged_table
+    report(arranged_table)
+    return gathered_coordinates
+
+
+def create_time_frames2(data_table, routers_number):
+    sensor_coordinates = load_sensor_locations(routers_number)
+    gathered_coordinates = []
+
+    stations_dict = {}
+    # (source, date_time, sensor_id, rssi)
+    for n in data_table:
+        source = n[0]
+        date_time = n[1]
+        sensor_id = n[2]
+        rssi = n[3]
+
+        try:
+            station_frame_dict = stations_dict[(source, date_time)]
+            try:
+                distance = station_frame_dict[sensor_id]
+                new_distance = compute_distance(rssi)
+                station_frame_dict[sensor_id] = (distance + new_distance) / 2
+            except TypeError:
+                pass
+            except KeyError:
+                station_frame_dict[sensor_id] = compute_distance(rssi)
+        except KeyError:
+            stations_dict[(source, date_time)] = {sensor_id: compute_distance(rssi)}
+
+
+    print('{:10} stations'.format(len(stations_dict)))
+
+    num_sensors_dict = {}
+    for station_frame in stations_dict:
+        station_frame_dict = stations_dict[station_frame]
+        size = len(station_frame_dict)
+        try:
+            num_sensors_dict[size] += 1
+        except KeyError:
+            num_sensors_dict[size] = 1
+
+        if size >= 3:
+
+            latitudes = []
+            longitudes = []
+            distances = []
+
+            for sensor_id, distance in station_frame_dict.items():
+                latitudes.append(sensor_coordinates[sensor_id][0])
+                longitudes.append(sensor_coordinates[sensor_id][1])
+                distances.append(distance)
+
+            coordinates = triangulation(latitudes[0], longitudes[0],
+                                        latitudes[1], longitudes[1],
+                                        latitudes[2], longitudes[2],
+                                        distances[0], distances[1], distances[2])
+            if not coordinates[0] or not coordinates[1]:
+                pass
+            else:
+                gathered_coordinates.append(coordinates)
+
+    for sensors, count in num_sensors_dict.items():
+        print('{:10} stations seen by {:2} sensors'.format(count, sensors))
+
+    return gathered_coordinates
 
 
 def report(time_frames_records):

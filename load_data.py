@@ -34,7 +34,6 @@ def load_data(sensor_installation, current_date, current_hour):
         # print(select_statement)
         db_cursor.execute(select_statement)
         selected_rows = db_cursor.fetchall()
-        print('matching records count = {}'.format(len(selected_rows)))
 
         return selected_rows
 
@@ -63,7 +62,7 @@ def load_sensor_locations(sensors):
         selected_rows = db_cursor.fetchall()
         result = dict()
         for id, c1, c2 in selected_rows:
-            result[id] = (c1, c2)
+            result[id] = (float(c1), float(c2))
             # print(result)
         return result
 
