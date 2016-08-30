@@ -14,7 +14,7 @@ from vizualization import vizualization
 hours = '23:59:59.000'
 approx_in_secs = 10
 routers_number = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
-requested_date = "2016-08-21"
+requested_date = "2016-8-21"
 name_file_outpup = 'bricolage'
 
 
