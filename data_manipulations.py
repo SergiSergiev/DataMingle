@@ -65,7 +65,7 @@ def create_time_frames(data_table, routers_number):
     coordinate_x = None
     coordinate_y = None
 
-    for idx, n in enumerate(data_table):
+    for n in data_table:
         if source == n[0] and time_frame == n[1]:
             if router_id_1 == None:
                 router_id_1 = n[2]
