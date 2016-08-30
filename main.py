@@ -20,20 +20,17 @@ name_file_outpup = 'bricolage'
 
 def main():
     db_records_sensor_date = load_data(routers_number, requested_date, hours)
+
+    print('matching records count = {}'.format(len(db_records_sensor_date)))
+
     round_by_sec = create_list(db_records_sensor_date, approx_in_secs)
-    time_frames_records = create_time_frames(round_by_sec, routers_number)
-    report(time_frames_records)
 
-    counter = 0
-    gathered_coordinates = list()
-    for n in time_frames_records:
-        if n[26] != None:
-            counter += 1
-            gathered_coordinates.append(n[-2:])
-    print("Number of coordinates: {}".format(counter))
-    file_name = name_file_outpup + '_' + requested_date + '_' + str(approx_in_secs)
-    vizualization(gathered_coordinates, file_name)
+    gathered_coordinates2 = create_time_frames2(round_by_sec, routers_number)
 
+    print("Number of coordinates: {}".format(len(gathered_coordinates2)))
+
+    file_name = name_file_outpup + '-2_' + requested_date + '_' + str(approx_in_secs)
+    vizualization(gathered_coordinates2, file_name)
 
 if __name__ == '__main__':
     main()
