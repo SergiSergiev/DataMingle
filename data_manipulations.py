@@ -8,7 +8,6 @@ KEY_SOURCE = 0
 KEY_SENSOR_ID = 1
 KEY_DATA_TS = 2
 KEY_RSSI = 3
-KEY_SEQ_CTL = 4
 
 freq_in_mhz = 2462
 
@@ -56,61 +55,61 @@ def create_time_frames(data_table, routers_number):
     for idx, n in enumerate(data_table):
         if source == n[0] and time_frame == n[1]:
             if router_id_1 == None:
-                router_id_1 = n[3]
+                router_id_1 = n[2]
                 router_1_counter = 1
-                rssi_1 = n[4]
+                rssi_1 = n[3]
 
-            elif router_id_1 == n[3]:
+            elif router_id_1 == n[2]:
                 router_1_counter += 1
-                rssi_1 = (rssi_1 + n[4])
+                rssi_1 = (rssi_1 + n[3])
             elif router_id_2 == None:
-                router_id_2 = n[3]
+                router_id_2 = n[2]
                 router_2_counter = 1
-                rssi_2 = n[4]
-            elif router_id_2 == n[3]:
+                rssi_2 = n[3]
+            elif router_id_2 == n[2]:
                 router_2_counter += 1
-                rssi_2 = (rssi_2 + n[4])
+                rssi_2 = (rssi_2 + n[3])
             elif router_id_3 == None:
-                router_id_3 = n[3]
+                router_id_3 = n[2]
                 router_3_counter = 1
-                rssi_3 = n[4]
-            elif router_id_3 == n[3]:
+                rssi_3 = n[3]
+            elif router_id_3 == n[2]:
                 router_3_counter += 1
-                rssi_3 = (rssi_3 + n[4])
+                rssi_3 = (rssi_3 + n[3])
 
             elif router_id_4 == None:
-                router_id_4 = n[3]
+                router_id_4 = n[2]
                 router_4_counter = 1
-                rssi_4 = n[4]
-            elif router_id_4 == n[3]:
+                rssi_4 = n[3]
+            elif router_id_4 == n[2]:
                 router_4_counter += 1
-                rssi_4 = (rssi_4 + n[4])
+                rssi_4 = (rssi_4 + n[3])
 
             elif router_id_5 == None:
-                router_id_5 = n[3]
+                router_id_5 = n[2]
                 router_5_counter = 1
-                rssi_5 = n[4]
+                rssi_5 = n[3]
 
-            elif router_id_5 == n[3]:
+            elif router_id_5 == n[2]:
                 router_5_counter += 1
-                rssi_5 = (rssi_5 + n[4])
+                rssi_5 = (rssi_5 + n[3])
 
-            elif router_id_6 == n[3]:
+            elif router_id_6 == n[2]:
                 router_6_counter += 1
-                rssi_6 = (rssi_6 + n[4])
+                rssi_6 = (rssi_6 + n[3])
             else:
-                router_id_6 = n[3]
+                router_id_6 = n[2]
                 router_6_counter = 1
-                rssi_6 = n[4]
+                rssi_6 = n[3]
 
 
 
         elif source == None:
             source = n[0]
             time_frame = n[1]
-            router_id_1 = n[3]
+            router_id_1 = n[2]
             router_1_counter = 1
-            rssi_1 = n[4]
+            rssi_1 = n[3]
         else:
 
             if router_1_counter:
@@ -180,9 +179,9 @@ def create_time_frames(data_table, routers_number):
                                    ))
             source = n[0]
             time_frame = n[1]
-            router_id_1 = n[3]
+            router_id_1 = n[2]
             router_1_counter = 1
-            rssi_1 = n[4]
+            rssi_1 = n[3]
             router_id_2 = None
             router_2_counter = None
             rssi_2 = None
@@ -267,9 +266,8 @@ def create_list(data_table, approx_in_sec):
         source = n[KEY_SOURCE]
         sensor_id = n[KEY_SENSOR_ID]
         rssi = n[KEY_RSSI]
-        seq_ctl = n[KEY_SEQ_CTL]
 
-        sorted_table.append((source, date_time, seq_ctl, sensor_id, rssi))
+        sorted_table.append((source, date_time, sensor_id, rssi))
     return sorted_table
 
 

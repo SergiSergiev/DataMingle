@@ -24,11 +24,11 @@ def load_data(sensor_installation, current_date, current_hour):
         current_day_time = current_date + ' ' + current_hour
         # print(current_day_time)
         select_statement = '''
-        SELECT SOURCE, SENSOR_INSTALLATION_ID, DATE_TIME, RSSI, SEQ_CTL, FRAME_TYPE, SUB_BITS
+        SELECT SOURCE, SENSOR_INSTALLATION_ID, DATE_TIME, RSSI
         FROM "SHOPUP"."me.shopup.data::data"
         WHERE SENSOR_INSTALLATION_ID IN {sensors} AND
         DATE_TIME BETWEEN '{current_day}'  AND '{current_day_time}'
-        ORDER BY SOURCE, DATE_TIME, SEQ_CTL '''.format(sensors=sensor_installation, current_day=current_date,
+        ORDER BY SOURCE, DATE_TIME '''.format(sensors=sensor_installation, current_day=current_date,
                                                        current_day_time=current_day_time)  # , [sensor_installation]
 
         # print(select_statement)
