@@ -113,17 +113,17 @@ def create_time_frames(data_table, routers_number):
             rssi_1 = n[4]
         else:
 
-            if router_1_counter != None:
+            if router_1_counter:
                 rssi_1_average = rssi_1 / router_1_counter
                 lat_A = routers_coordinates[router_id_1][0]
                 lon_A = routers_coordinates[router_id_1][1]
 
-            if router_2_counter != None:
+            if router_2_counter:
                 rssi_2_average = rssi_2 / router_2_counter
                 lat_B = routers_coordinates[router_id_2][0]
                 lon_B = routers_coordinates[router_id_2][1]
 
-            if router_3_counter != None:
+            if router_3_counter:
                 rssi_3_average = rssi_3 / router_3_counter
                 lat_C = routers_coordinates[router_id_3][0]
                 lon_C = routers_coordinates[router_id_3][1]
@@ -136,10 +136,10 @@ def create_time_frames(data_table, routers_number):
                 coordinate_x = coordinates[0]
                 coordinate_y = coordinates[1]
 
-            if router_4_counter != None:
+            if router_4_counter:
                 rssi_4_average = rssi_4 / router_4_counter
                 rssi_4_meters = compute_distance(rssi_4_average)
-                if coordinate_x == None:
+                if not coordinate_x:
                     lat_D = routers_coordinates[router_id_4][0]
                     lon_D = routers_coordinates[router_id_4][1]
                     coordinates = triangulation(float(lat_A), float(lon_A), float(lat_B), float(lon_B),
@@ -147,10 +147,10 @@ def create_time_frames(data_table, routers_number):
                     coordinate_x = coordinates[0]
                     coordinate_y = coordinates[1]
 
-            if router_5_counter != None:
+            if router_5_counter:
                 rssi_5_average = rssi_5 / router_5_counter
                 rssi_5_meters = compute_distance(rssi_5_average)
-                if coordinate_x == None:
+                if not coordinate_x:
                     lat_E = routers_coordinates[router_id_5][0]
                     lon_E = routers_coordinates[router_id_5][1]
                     coordinates = triangulation(float(lat_A), float(lon_A), float(lat_B), float(lon_B),
@@ -158,10 +158,10 @@ def create_time_frames(data_table, routers_number):
                     coordinate_x = coordinates[0]
                     coordinate_y = coordinates[1]
 
-            if router_6_counter != None:
+            if router_6_counter:
                 rssi_6_average = rssi_6 / router_6_counter
                 rssi_6_meters = compute_distance(rssi_6_average)
-                if coordinate_x == None:
+                if not coordinate_x:
                     lat_F = routers_coordinates[router_id_6][0]
                     lon_F = routers_coordinates[router_id_6][1]
                     coordinates = triangulation(float(lat_A), float(lon_A), float(lat_B), float(lon_B),
@@ -224,17 +224,17 @@ def report(time_frames_records):
     count_5 = 0
     count_6 = 0
     for n in time_frames_records:
-        if n[2] != None and n[6] == None:
+        if n[2] and not n[6]:
             count_1 += 1
-        if n[6] != None and n[10] == None:
+        if n[6] and not n[10]:
             count_2 += 1
-        if n[10] != None and n[14] == None:
+        if n[10] and not n[14]:
             count_3 += 1
-        if n[14] != None and n[18] == None:
+        if n[14] and not n[18]:
             count_4 += 1
-        if n[18] != None and n[22] == None:
+        if n[18] and not n[22]:
             count_5 += 1
-        if n[22] != None:
+        if n[22]:
             count_6 += 1
 
     # pprint(time_frames_records)
