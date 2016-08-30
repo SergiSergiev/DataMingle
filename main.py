@@ -7,7 +7,8 @@
 6. Save on DB
 '''
 
-from data_manipulations import create_time_frames, report, create_list
+import os, pickle
+from data_manipulations import create_time_frames, create_time_frames2, report, create_list
 from load_data import load_data
 from vizualization import vizualization
 
@@ -19,7 +20,14 @@ name_file_outpup = 'bricolage'
 
 
 def main():
-    db_records_sensor_date = load_data(routers_number, requested_date, hours)
+    pickle_file_name = 'pickle_' + name_file_outpup + '_' + requested_date + '_' + hours
+    if os.path.exists(pickle_file_name):
+        with open(pickle_file_name, "rb") as pickle_file:
+            db_records_sensor_date = pickle.load(pickle_file)
+    else:
+        db_records_sensor_date = load_data(routers_number, requested_date, hours)
+        with open(pickle_file_name, "wb") as pickle_file:
+            pickle.dump(db_records_sensor_date, pickle_file)
 
     print('matching records count = {}'.format(len(db_records_sensor_date)))
 
