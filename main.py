@@ -8,7 +8,7 @@
 '''
 
 import os, pickle
-from data_manipulations import create_time_frames, create_time_frames2, report, create_list
+from data_manipulations import create_time_frames, create_time_frames2, report, create_list_with_rounded_seconds
 from load_data import load_data
 from vizualization import vizualization
 
@@ -31,7 +31,7 @@ def main():
 
     print('matching records count = {}'.format(len(db_records_sensor_date)))
 
-    round_by_sec = create_list(db_records_sensor_date, approx_in_secs)
+    round_by_sec = create_list_with_rounded_seconds(db_records_sensor_date, approx_in_secs)
 
     gathered_coordinates2 = create_time_frames2(round_by_sec, routers_number)
 

@@ -338,7 +338,7 @@ def report(time_frames_records):
                count_6 / total * 100))
 
 
-def create_list(data_table, approx_in_sec):
+def create_list_with_rounded_seconds(data_table, approx_in_sec):
     sorted_table = []
     for n in data_table:
         date_time = n[KEY_DATA_TS].replace(microsecond=0)
