@@ -46,8 +46,9 @@ def triangulation(LatA, LonA, LatB, LonB, LatC, LonC, DistA, DistB, DistC):
     y = ((pow(DistA, 2) - pow(DistC, 2) + pow(i, 2) + pow(j, 2)) / (2 * j)) - ((i / j) * x)
 
     # only one case shown here
-    if (pow(DistA, 2) - pow(x, 2) - pow(y, 2)) > 0:
-        z = numpy.sqrt(pow(DistA, 2) - pow(x, 2) - pow(y, 2))
+    dx = pow(DistA, 2) - pow(x, 2) - pow(y, 2)
+    if dx > 0:
+        z = numpy.sqrt(dx)
 
         # triPt is an array with ECEF x,y,z of trilateration point
         triPt = P1 + x * ex + y * ey + z * ez
