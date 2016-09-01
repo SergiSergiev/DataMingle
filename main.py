@@ -8,6 +8,8 @@
 '''
 
 import os, pickle
+import gridgen
+
 from data_manipulations import create_time_frames, create_time_frames2, report, create_list_with_rounded_seconds
 from load_data import load_data
 from vizualization import vizualization
@@ -31,14 +33,30 @@ def main():
 
     print('matching records count = {}'.format(len(db_records_sensor_date)))
 
+    zones = gridgen.get_bricolage_zones(10, 10)
+
     round_by_sec = create_list_with_rounded_seconds(db_records_sensor_date, approx_in_secs)
 
-    gathered_coordinates2 = create_time_frames2(round_by_sec, routers_number)
+    addjusted = []
+    coordinates = create_time_frames2(round_by_sec, routers_number)
+    for point in coordinates:
+        point_fit = False
+        for zone in zones:
+            if zone.contain(gridgen.Point(point[0], point[1])):
+                zone.visit()
+                addjusted.append((zone.m.lat, zone.m.lon))
 
-    print("Number of coordinates: {}".format(len(gathered_coordinates2)))
+        if not point_fit:
+            print('point {} outside the grid'.format(point))
+
+    print("number of coordinates: {}".format(len(coordinates)))
+    print("addjusted coordinates: {}".format(len(addjusted)))
+
+    for idx, zone in enumerate(zones):
+        print('zone {}: visited {} times'.format(idx, zone))
 
     file_name = name_file_outpup + '-2_' + requested_date + '_' + str(approx_in_secs)
-    vizualization(gathered_coordinates2, file_name)
+    vizualization(addjusted, file_name)
 
 if __name__ == '__main__':
     main()
