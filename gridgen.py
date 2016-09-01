@@ -73,10 +73,6 @@ class Rectangle(object):
         self.c = self.b.slide(h, t + 90)
         self.d = self.a.slide(h, t + 90)
 
-    def __repr__(self):
-        return '{}\n{}\n{}\n{}'.format(self.a, self.b, self.c, self.d)
-
-    def center(self):
         points = [self.a, self.b, self.c, self.d]
         center = Point(0, 0)
         num = len(points)
@@ -85,8 +81,13 @@ class Rectangle(object):
             center.lat += points[i].lat
         center.lon /= num
         center.lat /= num
+        self.m = center
 
-        return center
+    def __repr__(self):
+        return '{}\n{}\n{}\n{}'.format(self.a, self.b, self.c, self.d)
+
+    def center(self):
+        return self.m
 
     def contain(self, p):
         ba_lon = self.b.lon - self.a.lon
@@ -115,10 +116,35 @@ class Rectangle(object):
                 p = self.a
                 p = p.slide(new_w * x, self.t)
                 p = p.slide(new_h * y, self.t + 90)
-                r = Rectangle(p, new_w, new_h, self.t)
+                r = self.__class__(p, new_w, new_h, self.t)
                 rectangles.append(r)
 
         return rectangles
+
+
+class Zone(Rectangle):
+    def __init__(self, p, w, h, t):
+        Rectangle.__init__(self, p, w, h, t)
+        self.visited = 0
+
+    def __repr__(self):
+        return '{}'.format(self.visited)
+
+    def visit(self):
+        self.visited += 1
+
+
+def get_bricolage_zones(x, y):
+    a = Point(42.623833, 23.353693)
+
+    m = Point(42.623706, 23.354146)
+    n = Point(42.624090, 23.354344)
+    t = m.angle(n)
+
+    # mr. Bricolage SF3
+    r = Zone(a, 60, 50, t)
+
+    return r.split(x, y)
 
 
 if __name__ == '__main__':
