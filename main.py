@@ -20,7 +20,7 @@ name_file_outpup = 'bricolage'
 
 
 def main():
-    pickle_file_name = 'pickle_' + name_file_outpup + '_' + requested_date + '_' + hours
+    pickle_file_name = name_file_outpup + '_' + requested_date + '_' + hours + '.pickle'
     if os.path.exists(pickle_file_name):
         with open(pickle_file_name, "rb") as pickle_file:
             db_records_sensor_date = pickle.load(pickle_file)
