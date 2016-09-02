@@ -10,7 +10,7 @@
 import os, pickle
 import gridgen
 
-from data_manipulations import create_time_frames, create_time_frames2, report, create_list_with_rounded_seconds
+from filtering import create_time_frames, create_time_frames2, report, create_list_with_rounded_seconds
 from load_data import load_data
 from vizualization import vizualization
 
