@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 
 import gridgen
 from filtering import trilaterate_points, round_seconds
-from load_data import load_data, load_sensor_locations
+from dbload import load_data, load_sensor_locations
 from vizualization import vizualization
 
 
