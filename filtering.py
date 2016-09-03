@@ -1,6 +1,6 @@
 import itertools
 
-from gridgen import Sensor
+from gridgen import Circle
 
 
 def trilaterate_points(data_table, sensor_points):
@@ -39,7 +39,7 @@ def trilaterate_points(data_table, sensor_points):
         if size >= 3:
             sensors = []
             for sensor_id, rssi in station_frame_dict.items():
-                s = Sensor(sensor_points[sensor_id], rssi)
+                s = Circle(sensor_points[sensor_id], rssi)
                 sensors.append(s)
 
             for subset in itertools.combinations(sensors, 3):

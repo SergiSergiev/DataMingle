@@ -152,7 +152,7 @@ class Zone(Rectangle):
         self.visited += 1
 
 
-class Sensor(object):
+class Circle(object):
     FSPL = []
     for dB in range(0, -101, -1):
         # FSPL(dB) = 20log_10(d) + 20log_10(f) - 27.55
@@ -168,13 +168,13 @@ class Sensor(object):
     def __init__(self, p, dB):
         self.p = p
         try:
-            self.d = Sensor.FSPL[int(ceil(fabs(dB)))]
+            self.r = Circle.FSPL[int(ceil(fabs(dB)))]
         except IndexError as idx_err:
             print('{},{}'.format(idx_err, dB))
             raise idx_err
 
     def __repr__(self):
-        return '{},{}'.format(self.p, self.d)
+        return '{},{}'.format(self.p, self.r)
 
     # http://en.wikipedia.org/wiki/Trilateration
     # assuming elevation = 0
