@@ -7,56 +7,79 @@
 6. Save on DB
 '''
 
-import os, pickle
-import gridgen
+from datetime import datetime, timedelta
 
-from filtering import create_time_frames, create_time_frames2, report, create_list_with_rounded_seconds
-from load_data import load_data
+import gridgen
+from filtering import trilaterate_points, round_seconds
+from load_data import load_data, load_sensor_locations
 from vizualization import vizualization
 
-hours = '23:59:59.000'
-approx_in_secs = 10
-routers_number = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
-requested_date = "2016-8-21"
-name_file_outpup = 'bricolage'
+
+def choose_date(prompt_sting):
+    while True:
+        now = '2016-08-10'  # input('{} {} ? '.format(prompt_sting, date.today()))
+        try:
+            return datetime.strptime(now, '%Y-%m-%d')
+        except ValueError as val_err:
+            print(val_err)
+            continue
 
 
 def main():
-    pickle_file_name = name_file_outpup + '_' + requested_date + '_' + hours + '.pickle'
-    if os.path.exists(pickle_file_name):
-        with open(pickle_file_name, "rb") as pickle_file:
-            db_records_sensor_date = pickle.load(pickle_file)
-    else:
-        db_records_sensor_date = load_data(routers_number, requested_date, hours)
-        with open(pickle_file_name, "wb") as pickle_file:
-            pickle.dump(db_records_sensor_date, pickle_file)
+    sensors_ids = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
+    sensor_points = load_sensor_locations(sensors_ids)
+    approx_in_secs = 10
+    integration_interval = 6  # hours
 
-    print('matching records count = {}'.format(len(db_records_sensor_date)))
+    venue_name = 'bricolage'
 
-    zones = gridgen.get_bricolage_zones(10, 10)
+    start_date = choose_date("choose date")
 
-    round_by_sec = create_list_with_rounded_seconds(db_records_sensor_date, approx_in_secs)
+    for hour in range(0, 24, integration_interval):
 
-    addjusted = []
-    coordinates = create_time_frames2(round_by_sec, routers_number)
-    for point in coordinates:
-        point_fit = False
-        for zone in zones:
-            if zone.contain(gridgen.Point(point[0], point[1])):
-                zone.visit()
-                addjusted.append((zone.m.lat, zone.m.lon))
+        start_date_time = start_date + timedelta(hours=hour)
+        end_date_time = start_date + timedelta(hours=hour + integration_interval, minutes=59)
 
-        if not point_fit:
-            print('point {} outside the grid'.format(point))
+        db_records = load_data(sensors_ids, start_date_time, end_date_time)
 
-    print("number of coordinates: {}".format(len(coordinates)))
-    print("addjusted coordinates: {}".format(len(addjusted)))
+        print('{:10} database records'.format(len(db_records)))
 
-    for idx, zone in enumerate(zones):
-        print('zone {}: visited {} times'.format(idx, zone))
+        zones = gridgen.get_bricolage_zones(10, 10)
 
-    file_name = name_file_outpup + '-2_' + requested_date + '_' + str(approx_in_secs)
-    vizualization(addjusted, file_name)
+        round_by_sec = round_seconds(db_records, approx_in_secs)
+
+        addjusted = []
+        outside_the_grid = 0
+        coordinates = trilaterate_points(round_by_sec, sensor_points)
+        for point in coordinates:
+            point_fit = False
+            for zone in zones:
+                if zone.contain(point):
+                    point_fit = True
+                    zone.visit()
+                    addjusted.append(zone)
+
+            if not point_fit:
+                outside_the_grid += 1
+
+        print("{:10} coordinates".format(len(coordinates)))
+        print("{:10} addjusted coordinates".format(len(addjusted)))
+        print('{:10} points outside the grid'.format(outside_the_grid))
+        if not len(addjusted):
+            continue
+
+        # for idx, zone in enumerate(zones):
+        #     print('zone {}: visited {} times'.format(idx, zone))
+
+        file_name = "".join([venue_name, '-', str(start_date_time)])
+
+        heat = []
+        for z in addjusted:
+            heat.append((z.m.lat, z.m.lon, z.visited))
+            # print(z)
+
+        vizualization(heat, file_name)
+
 
 if __name__ == '__main__':
     main()

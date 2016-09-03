@@ -12,8 +12,10 @@ import sys
 
 import pyhdb
 
+import gridgen
 
-def load_data(sensor_installation, current_date, current_hour):
+
+def load_data(sensor_installation, start_date_time, end_date_time):
     try:
         db_connection = pyhdb.connect(host="52.58.251.227", port=30015, user='SYSTEM', password='a5_hS3aZ#')
         db_cursor = db_connection.cursor()
@@ -21,15 +23,14 @@ def load_data(sensor_installation, current_date, current_hour):
         print(why)
         sys.exit(1)
     try:
-        current_day_time = current_date + ' ' + current_hour
         # print(current_day_time)
         select_statement = '''
         SELECT SOURCE, SENSOR_INSTALLATION_ID, DATE_TIME, RSSI
         FROM "SHOPUP"."me.shopup.data::data"
         WHERE SENSOR_INSTALLATION_ID IN {sensors} AND
-        DATE_TIME BETWEEN '{current_day}'  AND '{current_day_time}'
-        ORDER BY SOURCE, DATE_TIME '''.format(sensors=sensor_installation, current_day=current_date,
-                                                       current_day_time=current_day_time)  # , [sensor_installation]
+        DATE_TIME BETWEEN '{start_date_time}'  AND '{end_day_time}'
+        ORDER BY SOURCE, DATE_TIME '''.format(sensors=sensor_installation, start_date_time=start_date_time,
+                                              end_day_time=end_date_time)
 
         # print(select_statement)
         db_cursor.execute(select_statement)
@@ -62,7 +63,7 @@ def load_sensor_locations(sensors):
         selected_rows = db_cursor.fetchall()
         result = dict()
         for id, c1, c2 in selected_rows:
-            result[id] = (float(c1), float(c2))
+            result[id] = gridgen.Point(c1, c2)
             # print(result)
         return result
 

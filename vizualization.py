@@ -1,7 +1,7 @@
-import folium
-import os
 import csv
+import os
 
+import folium
 from folium import plugins
 
 
@@ -32,7 +32,7 @@ def read_file(file_name, display=False):
 
 
 def vizualization(data, file_name):
-    heatmap_map = folium.Map(data[0], zoom_start=20)
+    heatmap_map = folium.Map(data[0], zoom_start=19, control_scale=True)
 
     hm = plugins.HeatMap(data)
     heatmap_map.add_children(hm)

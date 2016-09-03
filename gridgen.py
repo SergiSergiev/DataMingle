@@ -3,7 +3,12 @@
 # 42.624743, 23.353345
 # 42.624106, 23.352924
 
-from math import cos, sin, asin, sqrt, pi, degrees, radians
+from math import cos, sin, asin, sqrt, pi, degrees, radians, atan2, isnan, log10, fabs, ceil
+
+import numpy as np
+
+scale = 1
+earthR = 6378137.0 / scale
 
 
 class Point(object):
@@ -29,7 +34,7 @@ class Point(object):
         a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
         c = 2 * asin(sqrt(a))
         # r = 6371 # Radius of earth in kilometers. Use 3956 for miles
-        r = 6378137.0
+        r = earthR
         return c * r
 
     def offset(self, delta_east, delta_nort):
@@ -37,7 +42,7 @@ class Point(object):
         Algorithm for offsetting a latitude/longitude by some amount of meters
         """
         # Coordinate offsets in radians
-        r = 6378137.0
+        r = earthR
         dlat = delta_nort / r
         dlon = delta_east / (r * cos(pi * self.lat / 180.0))
 
@@ -61,6 +66,19 @@ class Point(object):
         o = b / c
 
         return degrees(asin(o))
+
+    def ecef(self):
+        """
+        Using authalic sphere, if using an ellipsoid this step is slightly different
+        Convert geodetic Lat/Long to ECEF xyz
+          1. Convert Lat/Long to radians
+          2. Convert Lat/Long(radians) to ECEF  (Earth-Centered,Earth-Fixed)
+        """
+        x = earthR * (cos(radians(self.lat)) * cos(radians(self.lon)))
+        y = earthR * (cos(radians(self.lat)) * sin(radians(self.lon)))
+        z = earthR * (sin(radians(self.lat)))
+
+        return [x, y, z]
 
 
 class Rectangle(object):
@@ -128,34 +146,98 @@ class Zone(Rectangle):
         self.visited = 0
 
     def __repr__(self):
-        return '{}'.format(self.visited)
+        return '{},{},{},{},{}'.format(self.a, self.b, self.c, self.d, self.visited)
 
     def visit(self):
         self.visited += 1
 
 
-def get_bricolage_zones(x, y):
-    a = Point(42.623833, 23.353693)
+class Sensor(object):
+    FSPL = []
+    for dB in range(0, -101, -1):
+        # FSPL(dB) = 20log_10(d) + 20log_10(f) - 27.55
+        # (dB - 20 * log10(f) + 27.55) / 20 = log10(d)
+        # 10 exp (dB - 20 * log10(f) + 27.55) / 20 = d
 
+        frequency = 2462
+        exp = (fabs(dB) - 20 * log10(frequency) + 27.55) / 20
+        meters = pow(10.0, exp / 1.8)
+        v = meters / scale
+        FSPL.append(v)
+
+    def __init__(self, p, dB):
+        self.p = p
+        try:
+            self.d = Sensor.FSPL[int(ceil(fabs(dB)))]
+        except IndexError as idx_err:
+            print('{},{}'.format(idx_err, dB))
+            raise idx_err
+
+    def __repr__(self):
+        return '{},{}'.format(self.p, self.d)
+
+    # http://en.wikipedia.org/wiki/Trilateration
+    # assuming elevation = 0
+    # length unit : m
+    def trilaterate(self, s2, s3):
+        P1, P2, P3 = map(lambda x: np.array(x.p.ecef()), [self, s2, s3])
+        DistA, DistB, DistC = map(lambda x: x.d, [self, s2, s3])
+
+        # vector transformation: circle 1 at origin, circle 2 on x axis
+        ex = (P2 - P1) / (np.linalg.norm(P2 - P1))
+        i = np.dot(ex, P3 - P1)
+        ey = (P3 - P1 - i * ex) / (np.linalg.norm(P3 - P1 - i * ex))
+        ez = np.cross(ex, ey)
+        d = np.linalg.norm(P2 - P1)
+        j = np.dot(ey, P3 - P1)
+
+        try:
+            # plug and chug using above values
+            x = (pow(DistA, 2) - pow(DistB, 2) + pow(d, 2)) / (2 * d)
+            y = ((pow(DistA, 2) - pow(DistC, 2) + pow(i, 2) + pow(j, 2)) / (2 * j)) - ((i / j) * x)
+
+            # only one case shown here
+            dz = pow(DistA, 2) - pow(x, 2) - pow(y, 2)
+            # only one case shown here
+            z = np.sqrt(dz)
+        except TypeError as type_err:
+            return None
+
+        # xyz is an array with ECEF x,y,z of trilateration point
+        xyz = P1 + x * ex + y * ey + z * ez
+
+        # convert back to lat/long from ECEF
+        # convert to degrees
+        lat = degrees(asin(xyz[2] / earthR))
+        lon = degrees(atan2(xyz[1], xyz[0]))
+
+        if isnan(lat) or isnan(lon):
+            return None
+
+        return Point(lat, lon)
+
+
+def get_bricolage_zones(x, y):
+    a = Point(42.623801, 23.353842)
     m = Point(42.623706, 23.354146)
     n = Point(42.624090, 23.354344)
     t = m.angle(n)
 
     # mr. Bricolage SF3
-    r = Zone(a, 60, 50, t)
+    r = Zone(a, 82.0 / scale, 80.0 / scale, t)
 
     return r.split(x, y)
 
 
 if __name__ == '__main__':
-    a = Point(42.623833, 23.353693)
-    b = Point(42.624531, 23.354114)
-    c = Point(42.624743, 23.353345)
-    d = Point(42.624095, 23.352912)
+    a = Point(42.623801, 23.353842)
+    # b = Point(42.624531, 23.354114)
+    # c = Point(42.624743, 23.353345)
+    # d = Point(42.624095, 23.352912)
 
     # random point
     z = Point(51.0, 0.0)
-    z = z.offset(0, 100.0)
+    z = z.offset(0, 100.0 / scale)
     # print(z)
 
     m = Point(42.623706, 23.354146)
@@ -163,14 +245,20 @@ if __name__ == '__main__':
     t = m.angle(n)
 
     # mr. Bricolage SF3
-    r = Rectangle(a, 60, 50, t)
-    print(r)
-
-    # Unit Tests?
-    print('Is poligon center inside poligon? {}'.format(r.contain(r.center())))
-    print('Is random point inside poligon?   {}'.format(r.contain(z)))
-
+    r = Rectangle(a, 82.0 / scale, 80.0 / scale, t)
+    # print(r)
+    #
+    # # Unit Tests?
+    # print('Is poligon center inside poligon? {}'.format(r.contain(r.center())))
+    # print('Is random point inside poligon?   {}'.format(r.contain(z)))
+    #
     grid = r.split(10, 10)
     for r in grid:
         print(r)
 
+    # s1 = Sensor(Point(31.257474, 121.620974), 0.228)
+    # s2 = Sensor(Point(31.260217, 121.621095), 0.123)
+    # s3 = Sensor(Point(31.259148, 121.623835), 0.187)
+    #
+    # p = s1.trilaterate(s2, s3)
+    # print(p)
