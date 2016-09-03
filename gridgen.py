@@ -181,7 +181,7 @@ class Circle(object):
     # length unit : m
     def trilaterate(self, s2, s3):
         P1, P2, P3 = map(lambda x: np.array(x.p.ecef()), [self, s2, s3])
-        DistA, DistB, DistC = map(lambda x: x.d, [self, s2, s3])
+        DistA, DistB, DistC = map(lambda x: x.r, [self, s2, s3])
 
         # vector transformation: circle 1 at origin, circle 2 on x axis
         ex = (P2 - P1) / (np.linalg.norm(P2 - P1))
