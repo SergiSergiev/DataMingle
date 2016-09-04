@@ -176,10 +176,28 @@ class Circle(object):
     def __repr__(self):
         return '{},{}'.format(self.p, self.r)
 
-    # http://en.wikipedia.org/wiki/Trilateration
-    # assuming elevation = 0
-    # length unit : m
+    def intersect(self, c2):
+        """
+        http://mathworld.wolfram.com/Circle-CircleIntersection.html
+        http://stackoverflow.com/questions/3349125/circle-circle-intersection-points
+        """
+        d = self.p.distance(c2.p)
+        if d > self.p.d + c2.p.d:
+            return False
+
+        if d < fabs(self.p.d - c2.p.d):
+            return False
+
+        if not d and self.p.d == c2.p.d:
+            return False
+
+
     def trilaterate(self, s2, s3):
+        """
+        http://en.wikipedia.org/wiki/Trilateration
+        assuming elevation = 0
+        length unit : m
+        """
         P1, P2, P3 = map(lambda x: np.array(x.p.ecef()), [self, s2, s3])
         DistA, DistB, DistC = map(lambda x: x.r, [self, s2, s3])
 
