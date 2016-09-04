@@ -153,7 +153,8 @@ class Zone(Rectangle):
 
 
 class Circle(object):
-    FSPL = []
+    horde_max = 2.5 # meters
+    dB_m = []
     for dB in range(0, -101, -1):
         # FSPL(dB) = 20log_10(d) + 20log_10(f) - 27.55
         # (dB - 20 * log10(f) + 27.55) / 20 = log10(d)
@@ -163,35 +164,63 @@ class Circle(object):
         exp = (fabs(dB) - 20 * log10(frequency) + 27.55) / 20
         meters = pow(10.0, exp / 1.6)
         v = meters / scale
-        FSPL.append(v)
-        # print(FSPL)
+        dB_m.append(v)
+        # print(fspl)
 
     def __init__(self, p, dB):
         self.p = p
-        try:
-            self.r = Circle.FSPL[int(ceil(fabs(dB)))]
-        except IndexError as idx_err:
-            print('{},{}'.format(idx_err, dB))
-            raise idx_err
+        if dB > 0:
+            self.r = dB
+        else:
+            try:
+                self.r = Circle.dB_m[int(ceil(fabs(dB)))]
+            except IndexError as idx_err:
+                print('{},{}'.format(idx_err, dB))
+                raise idx_err
 
     def __repr__(self):
         return '{},{}'.format(self.p, self.r)
 
-    def intersect(self, c2):
+    def intersect(self, c1):
         """
         http://mathworld.wolfram.com/Circle-CircleIntersection.html
         http://stackoverflow.com/questions/3349125/circle-circle-intersection-points
+        http://paulbourke.net/geometry/circlesphere/tvoght.c
         """
-        d = self.p.distance(c2.p)
-        if d > self.p.d + c2.p.d:
-            return False
+        # dx and dy are the vertical and horizontal distances between the circle centers.
+        dx = c1.p.lon - self.p.lon
+        dy = c1.p.lat - self.p.lat
 
-        if d < fabs(self.p.d - c2.p.d):
-            return False
+        d = self.p.distance(c1.p)
+        # d = sqrt((dy * dy) + (dx * dx))
+        r0 = self.r
+        r1 = c1.r
 
-        if not d and self.p.d == c2.p.d:
-            return False
+        if d > r0 + r1:
+            return None  # no solution. circles do not intersect.
 
+        if d < fabs(r0 - r1):
+            return None  # no solution. one circle is contained in the other
+
+        if not d and r0 == r1:
+            return None
+
+        # 'point 2' is the point where the line through the circle
+        # intersection points crosses the line between the circle
+        # centers.
+        #
+        # Determine the distance from point 0 to point 2.
+        a = ((r0 * r0) - (r1 * r1) + (d * d)) / (2.0 * d)
+
+        # Determine the coordinates of point 2.
+        x2 = self.p.lon + (dx * a / d)
+        y2 = self.p.lat + (dy * a / d)
+
+        # Determine the distance from point 2 to either of the intersection points.
+        h = sqrt((r0 * r0) - (a * a))
+
+        # print('{:10} distance'.format(h))
+        return Point(x2, y2) if h < Circle.horde_max else None
 
     def trilaterate(self, s2, s3):
         """
@@ -269,3 +298,20 @@ if __name__ == '__main__':
     #
     # p = s1.trilaterate(s2, s3)
     # print(p)
+
+    c0 = Circle(Point(-1.0, -1.0), 1.5)
+    c1 = Circle(Point(1.0, 1.0), 2.0)
+    print(c0.intersect(c1))
+
+    c0 = Circle(Point(1.0, -1.0), 1.5)
+    c1 = Circle(Point(-1.0, 1.0), 2.0)
+    print(c0.intersect(c1))
+
+    c0 = Circle(Point(-1.0, 1.0), 1.5)
+    c1 = Circle(Point(1.0, -1.0), 2.0)
+    print(c0.intersect(c1))
+
+    c0 = Circle(Point(1.0, 1.0), 1.5)
+    c1 = Circle(Point(-1.0, -1.0), 2.0)
+    print(c0.intersect(c1))
+
