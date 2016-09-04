@@ -10,6 +10,7 @@
 from datetime import datetime, timedelta
 
 import bricolage
+import os, pickle
 from filtering import trilaterate_points, round_seconds
 from dbload import load_data, load_sensor_locations
 from vizualization import vizualization
@@ -29,18 +30,27 @@ def main():
     sensors_ids = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
     sensor_points = load_sensor_locations(sensors_ids)
     approx_in_secs = 10
-    integration_interval = 6  # hours
+    integration_interval = 22 - 8  # hours
+    use_pickle = False
 
     venue_name = 'bricolage'
 
     start_date = choose_date("choose date")
 
-    for hour in range(0, 24, integration_interval):
+    for hour in range(8, 22, integration_interval):
 
         start_date_time = start_date + timedelta(hours=hour)
         end_date_time = start_date + timedelta(hours=hour + integration_interval, minutes=59)
 
-        db_records = load_data(sensors_ids, start_date_time, end_date_time)
+        pickle_file_name = venue_name + '.pickle'
+        if use_pickle and os.path.exists(pickle_file_name):
+            with open(venue_name + '.pickle', "rb") as pickle_file:
+                db_records = pickle.load(pickle_file)
+        else:
+            db_records = load_data(sensors_ids, start_date_time, end_date_time)
+            if use_pickle:
+                with open(pickle_file_name, "wb") as pickle_file:
+                    pickle.dump(db_records, pickle_file)
 
         print('{:10} database records'.format(len(db_records)))
 
