@@ -161,9 +161,10 @@ class Circle(object):
 
         frequency = 2462
         exp = (fabs(dB) - 20 * log10(frequency) + 27.55) / 20
-        meters = pow(10.0, exp / 1.8)
+        meters = pow(10.0, exp / 1.6)
         v = meters / scale
         FSPL.append(v)
+        # print(FSPL)
 
     def __init__(self, p, dB):
         self.p = p
