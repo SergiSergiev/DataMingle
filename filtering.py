@@ -27,6 +27,7 @@ def trilaterate_points(data_table, sensor_points):
 
     print('{:10} stations'.format(len(stations_dict)))
 
+    size_2 = 0
     num_sensors_dict = {}
     for station_frame in stations_dict:
         station_frame_dict = stations_dict[station_frame]
@@ -35,6 +36,18 @@ def trilaterate_points(data_table, sensor_points):
             num_sensors_dict[size] += 1
         except KeyError:
             num_sensors_dict[size] = 1
+
+        if size == 2:
+            sensors = []
+            for sensor_id, rssi in station_frame_dict.items():
+                s = Circle(sensor_points[sensor_id], rssi)
+                sensors.append(s)
+
+            c0, c1 = map(lambda x: x, sensors)
+            p = c0.intersect(c1)
+            if p:
+                size_2 += 1
+                gathered.append(p)
 
         if size >= 3:
             sensors = []
@@ -50,6 +63,8 @@ def trilaterate_points(data_table, sensor_points):
                     break
                 else:
                     pass
+
+    print('{:10} coordinates from  2 sensors'.format(size_2))
 
     for sensors, count in num_sensors_dict.items():
         print('{:10} stations seen by {:2} sensors'.format(count, sensors))
