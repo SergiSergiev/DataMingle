@@ -9,7 +9,7 @@
 
 from datetime import datetime, timedelta
 
-import gridgen
+import bricolage
 from filtering import trilaterate_points, round_seconds
 from dbload import load_data, load_sensor_locations
 from vizualization import vizualization
@@ -44,7 +44,7 @@ def main():
 
         print('{:10} database records'.format(len(db_records)))
 
-        zones = gridgen.get_bricolage_zones(10, 10)
+        zones = bricolage.get_zones(10, 10)
 
         round_by_sec = round_seconds(db_records, approx_in_secs)
 

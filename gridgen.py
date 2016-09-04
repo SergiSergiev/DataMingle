@@ -236,18 +236,6 @@ class Circle(object):
         return Point(lat, lon)
 
 
-def get_bricolage_zones(x, y):
-    a = Point(42.623801, 23.353842)
-    m = Point(42.623706, 23.354146)
-    n = Point(42.624090, 23.354344)
-    t = m.angle(n)
-
-    # mr. Bricolage SF3
-    r = Zone(a, 82.0 / scale, 80.0 / scale, t)
-
-    return r.split(x, y)
-
-
 if __name__ == '__main__':
     a = Point(42.623801, 23.353842)
     # b = Point(42.624531, 23.354114)
