@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 
 import bricolage
 import os, pickle
-from filtering import trilaterate_points, round_seconds
+from filtering import trilaterate, round_seconds, segregate
 from dbload import load_data, load_sensor_locations
 from vizualization import vizualization
 
@@ -58,24 +58,24 @@ def main():
 
         round_by_sec = round_seconds(db_records, approx_in_secs)
 
-        addjusted = []
-        outside_the_grid = 0
-        coordinates = trilaterate_points(round_by_sec, sensor_points)
+        adjusted = []
+        outside = []
+        sensor_frames = segregate(round_by_sec)
+        coordinates = trilaterate(sensor_frames, sensor_points)
         for point in coordinates:
             point_fit = False
             for zone in zones:
                 if zone.contain(point):
                     point_fit = True
                     zone.visit()
-                    addjusted.append(zone)
-
+                    adjusted.append(zone)
             if not point_fit:
-                outside_the_grid += 1
+                outside.append(point)
 
         print("{:10} coordinates".format(len(coordinates)))
-        print("{:10} addjusted coordinates".format(len(addjusted)))
-        print('{:10} points outside the grid'.format(outside_the_grid))
-        if not len(addjusted):
+        print("{:10} adjusted coordinates".format(len(adjusted)))
+        print('{:10} points outside the grid'.format(len(outside)))
+        if not len(adjusted):
             continue
 
         # for idx, zone in enumerate(zones):
@@ -85,8 +85,12 @@ def main():
         file_name = "".join([venue_name, '-', date_string])
 
         heat = []
-        for z in addjusted:
+        for z in adjusted:
             heat.append((z.m.lat, z.m.lon, z.visited))
+            # print(z)
+
+        for z in outside:
+            heat.append((z.lat, z.lon, 1))
             # print(z)
 
         vizualization(heat, file_name)

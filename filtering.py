@@ -3,8 +3,7 @@ import itertools
 from gridgen import Circle
 
 
-def trilaterate_points(data_table, sensor_points):
-    gathered = []
+def segregate(data_table):
     stations_dict = {}
     # (source, date_time, sensor_id, rssi)
     for n in data_table:
@@ -25,8 +24,12 @@ def trilaterate_points(data_table, sensor_points):
         except KeyError:
             stations_dict[(source, date_time)] = {sensor_id: rssi}
 
-    print('{:10} stations'.format(len(stations_dict)))
+    print('{:10} station-time frames'.format(len(stations_dict)))
+    return stations_dict
 
+
+def trilaterate(stations_dict, sensor_points):
+    gathered = []
     size_2 = 0
     num_sensors_dict = {}
     for station_frame in stations_dict:
@@ -64,10 +67,11 @@ def trilaterate_points(data_table, sensor_points):
                 else:
                     pass
 
-    print('{:10} coordinates from  2 sensors'.format(size_2))
-
     for sensors, count in num_sensors_dict.items():
         print('{:10} stations seen by {:2} sensors'.format(count, sensors))
+
+    print('{:10} coordinates from  2 sensors'.format(size_2))
+    print('{:10} coordinates from  3 sensors'.format(len(gathered) - size_2))
 
     return gathered
 
