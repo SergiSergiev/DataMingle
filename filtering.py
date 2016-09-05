@@ -1,9 +1,9 @@
 import itertools
-
+from statistics import median
 from gridgen import Circle
 
 
-def segregate(data_table):
+def segregate_average(data_table):
     stations_dict = {}
     # (source, date_time, sensor_id, rssi)
     for n in data_table:
@@ -25,6 +25,45 @@ def segregate(data_table):
             stations_dict[(source, date_time)] = {sensor_id: rssi}
 
     print('{:10} station-time frames'.format(len(stations_dict)))
+    return stations_dict
+
+
+def segregate_median(data_table):
+    stations_dict = {}
+    # (source, date_time, sensor_id, rssi)
+    for n in data_table:
+        source = n[0]
+        date_time = n[1]
+        sensor_id = n[2]
+        rssi = n[3]
+
+        try:
+            station_frame_dict = stations_dict[(source, date_time)]
+            try:
+                rssi_list = station_frame_dict[sensor_id]
+                rssi_list.append(rssi)
+            except TypeError:
+                pass
+            except KeyError:
+                rssi_list = [rssi]
+                station_frame_dict[sensor_id] = rssi_list
+        except KeyError:
+            rssi_list = [rssi]
+            stations_dict[(source, date_time)] = {sensor_id: rssi_list}
+
+    print('{:10} station-time frames'.format(len(stations_dict)))
+
+    for station_frame in stations_dict:
+        station_frame_dict = stations_dict[station_frame]
+        for key in station_frame_dict:
+            rssi_list = station_frame_dict[key]
+            sorted_rssi = sorted(rssi_list)
+            rssi_len = len(sorted_rssi)
+            middle = median(sorted_rssi)
+            average = sum(sorted_rssi) / float(rssi_len)
+            station_frame_dict[key] = middle
+            # print('{}:{},{}'.format(rssi_len, middle, average))
+
     return stations_dict
 
 

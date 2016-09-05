@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 
 import bricolage
 import os, pickle
-from filtering import trilaterate, round_seconds, segregate
+from filtering import trilaterate, round_seconds, segregate_average
 from dbload import load_data, load_sensor_locations
 from vizualization import vizualization
 
@@ -60,7 +60,7 @@ def main():
 
         adjusted = []
         outside = []
-        sensor_frames = segregate(round_by_sec)
+        sensor_frames = segregate_average(round_by_sec)
         coordinates = trilaterate(sensor_frames, sensor_points)
         for point in coordinates:
             point_fit = False
