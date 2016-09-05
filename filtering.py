@@ -1,6 +1,6 @@
 import itertools
 from statistics import median
-from gridgen import Circle
+from gridgen import Sensor
 
 
 def segregate_average(data_table):
@@ -82,7 +82,7 @@ def trilaterate(stations_dict, sensor_points):
         if size == 2:
             sensors = []
             for sensor_id, rssi in station_frame_dict.items():
-                s = Circle(sensor_points[sensor_id], rssi)
+                s = Sensor(sensor_points[sensor_id], rssi)
                 sensors.append(s)
 
             c0, c1 = map(lambda x: x, sensors)
@@ -94,7 +94,7 @@ def trilaterate(stations_dict, sensor_points):
         if size >= 3:
             sensors = []
             for sensor_id, rssi in station_frame_dict.items():
-                s = Circle(sensor_points[sensor_id], rssi)
+                s = Sensor(sensor_points[sensor_id], rssi)
                 sensors.append(s)
 
             for subset in itertools.combinations(sensors, 3):

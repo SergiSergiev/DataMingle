@@ -153,30 +153,9 @@ class Zone(Rectangle):
 
 
 class Circle(object):
-    horde_max = 2.5 # meters
-    dB_m = []
-    for dB in range(0, -101, -1):
-        # FSPL(dB) = 20log_10(d) + 20log_10(f) - 27.55
-        # (dB - 20 * log10(f) + 27.55) / 20 = log10(d)
-        # 10 exp (dB - 20 * log10(f) + 27.55) / 20 = d
-
-        frequency = 2462
-        exp = (fabs(dB) - 20 * log10(frequency) + 27.55) / 20
-        meters = pow(10.0, exp / 1.6)
-        v = meters / scale
-        dB_m.append(v)
-        # print(fspl)
-
-    def __init__(self, p, dB):
+    def __init__(self, p, r):
         self.p = p
-        if dB > 0:
-            self.r = dB
-        else:
-            try:
-                self.r = Circle.dB_m[int(ceil(fabs(dB)))]
-            except IndexError as idx_err:
-                print('{},{}'.format(idx_err, dB))
-                raise idx_err
+        self.r = r
 
     def __repr__(self):
         return '{},{}'.format(self.p, self.r)
@@ -212,15 +191,14 @@ class Circle(object):
         # Determine the distance from point 0 to point 2.
         a = ((r0 * r0) - (r1 * r1) + (d * d)) / (2.0 * d)
 
-        # Determine the coordinates of point 2.
-        x2 = self.p.lon + (dx * a / d)
-        y2 = self.p.lat + (dy * a / d)
+        t = self.p.angle(c1.p)
+        p2 = self.p.slide(a, t)
 
         # Determine the distance from point 2 to either of the intersection points.
         h = sqrt((r0 * r0) - (a * a))
 
         # print('{:10} distance'.format(h))
-        return Point(x2, y2) if h < Circle.horde_max else None
+        return p2 if h < Sensor.horde_max else None
 
     def trilaterate(self, s2, s3):
         """
@@ -263,6 +241,30 @@ class Circle(object):
             return None
 
         return Point(lat, lon)
+
+
+class Sensor(Circle):
+    horde_max = 2.5 # meters
+    dB_m = []
+    for dB in range(0, -101, -1):
+        # FSPL(dB) = 20log_10(d) + 20log_10(f) - 27.55
+        # (dB - 20 * log10(f) + 27.55) / 20 = log10(d)
+        # 10 exp (dB - 20 * log10(f) + 27.55) / 20 = d
+        frequency = 2462
+        exp = (fabs(dB) - 20 * log10(frequency) + 27.55) / 20
+        meters = pow(10.0, exp / 1.6)
+        v = meters / scale
+        dB_m.append(v)
+        # print(fspl)
+
+    def __init__(self, p, dB):
+        try:
+            r = Sensor.dB_m[int(ceil(fabs(dB)))]
+        except IndexError as idx_err:
+            print('{},{}'.format(idx_err, dB))
+            raise idx_err
+
+        Circle.__init__(self, p, r)
 
 
 if __name__ == '__main__':
