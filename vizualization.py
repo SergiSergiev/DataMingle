@@ -32,7 +32,7 @@ def read_file(file_name, display=False):
 
 
 def vizualization(data, file_name, margers):
-    heatmap_map = folium.Map(data[0], zoom_start=18, max_zoom=21, control_scale=True)
+    heatmap_map = folium.Map(data[0], zoom_start=18, max_zoom=21, control_scale=True, detect_retina=True)
 
     if margers:
         for m in margers:
@@ -45,6 +45,23 @@ def vizualization(data, file_name, margers):
 
     name = file_name + '.html'
     heatmap_map.save(name)
+
+    update_script = """
+
+        <script type="text/JavaScript">
+
+           function timedRefresh(timeoutPeriod) {
+               setTimeout("location.reload(true);",timeoutPeriod);
+           }
+
+           window.onload = timedRefresh(5000);
+
+        </script>
+
+    """
+
+    with open(name, 'a') as text_file:
+        text_file.write(update_script)
 
     # name = file_name + '.csv'
     # write_file(name, data)
