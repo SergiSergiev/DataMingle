@@ -32,16 +32,13 @@ def read_file(file_name, display=False):
 
 
 def vizualization(data, file_name):
-    heatmap_map = folium.Map(data[0], zoom_start=19, control_scale=True)
+    heatmap_map = folium.Map(data[0], zoom_start=19, max_zoom=21, control_scale=True)
 
     hm = plugins.HeatMap(data)
     heatmap_map.add_children(hm)
 
-    if not os.path.exists('maps'):
-        os.makedirs('maps')
+    name = file_name + '.html'
+    heatmap_map.save(name)
 
-    path = os.path.join('maps', file_name + '.html')
-    heatmap_map.save(path)
-
-    path = os.path.join('maps', file_name + '.csv')
-    write_file(path, data)
+    # name = file_name + '.csv'
+    # write_file(name, data)

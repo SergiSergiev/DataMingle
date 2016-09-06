@@ -79,8 +79,9 @@ def main():
         # for idx, zone in enumerate(zones):
         #     print('zone {}: visited {} times'.format(idx, zone))
 
+        file_name = os.path.join('app', 'templates', 'index')
         date_string = str(start_date_time).replace(':', '-')
-        file_name = "".join([venue_name, '-', date_string])
+        file_name = file_name + '-' + date_string
 
         heat = []
         for z in adjusted:
