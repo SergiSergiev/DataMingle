@@ -34,7 +34,7 @@ def main():
     use_pickle = False
 
     venue_name = 'bricolage'
-
+    zones = bricolage.get_zones(10, 10)
     start_date = choose_date("choose date")
 
     for hour in range(8, 22, integration_interval):
@@ -53,8 +53,6 @@ def main():
                     pickle.dump(db_records, pickle_file)
 
         print('{:10} database records'.format(len(db_records)))
-
-        zones = bricolage.get_zones(10, 10)
 
         round_by_sec = round_seconds(db_records, approx_in_secs)
 
