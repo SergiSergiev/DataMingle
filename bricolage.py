@@ -31,6 +31,21 @@ def get_zones(x, y):
     return r.split(x, y)
 
 
+def get_rectangle():
+    # mr. Bricolage SF3
+    a = Point(42.623801, 23.353842)
+    m = Point(42.623706, 23.354146)
+    n = Point(42.624090, 23.354344)
+    t = m.angle(n)
+
+    cc = 8.5 # column to column offset in meters
+
+    height = cc * 8.0
+    width = cc * 7.0
+
+    return Rectangle(a, width, height, t)
+
+
 if __name__ == '__main__':
 
     # mr. Bricolage SF3
