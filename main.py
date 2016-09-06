@@ -30,7 +30,7 @@ def main():
     sensors_ids = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
     sensor_points = load_sensor_locations(sensors_ids)
     approx_in_secs = 10
-    integration_interval = 22 - 8  # hours
+    integration_interval = 1  # hours
     use_pickle = False
 
     venue_name = 'bricolage'
