@@ -71,6 +71,7 @@ def index():
     hour = 10
 
     zones = bricolage.get_zones(10, 10)
+    borders = bricolage.get_borders()
     start_date = choose_date("choose date")
 
     start_date_time = start_date + timedelta(hours=hour)
@@ -109,6 +110,6 @@ def index():
     for p in outside:
         heat.append((p.lat, p.lon, 1))
 
-    vizualization(heat, file_name)
+    vizualization(heat, file_name, [borders.a, borders.b, borders.c, borders.d])
 
     return render_template("index.html")

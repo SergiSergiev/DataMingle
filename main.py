@@ -35,6 +35,7 @@ def main():
 
     venue_name = 'bricolage'
     zones = bricolage.get_zones(10, 10)
+    borders = bricolage.get_borders()
     start_date = choose_date("choose date")
 
     for hour in range(8, 22, integration_interval):
@@ -92,7 +93,7 @@ def main():
             heat.append((z.lat, z.lon, 1))
             # print(z)
 
-        vizualization(heat, file_name)
+        vizualization(heat, file_name, [borders.a, borders.b, borders.c, borders.d])
 
 
 if __name__ == '__main__':

@@ -31,8 +31,14 @@ def read_file(file_name, display=False):
     return csv_lines
 
 
-def vizualization(data, file_name):
-    heatmap_map = folium.Map(data[0], zoom_start=19, max_zoom=21, control_scale=True)
+def vizualization(data, file_name, margers):
+    heatmap_map = folium.Map(data[0], zoom_start=18, max_zoom=21, control_scale=True)
+
+    if margers:
+        for m in margers:
+            marker = folium.RegularPolygonMarker(location=[m.lat, m.lon], fill_color='#769d96',
+                                                number_of_sides=8, radius=10)
+            marker.add_to(heatmap_map)
 
     hm = plugins.HeatMap(data)
     heatmap_map.add_children(hm)

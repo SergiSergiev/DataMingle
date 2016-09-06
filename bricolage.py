@@ -31,7 +31,7 @@ def get_zones(x, y):
     return r.split(x, y)
 
 
-def get_rectangle():
+def get_borders():
     # mr. Bricolage SF3
     a = Point(42.623801, 23.353842)
     m = Point(42.623706, 23.354146)
