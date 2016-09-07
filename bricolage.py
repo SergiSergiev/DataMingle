@@ -23,8 +23,8 @@ def get_zones(x, y):
     height = cc * 8.0
     width = cc * 7.0
 
-    print('mr.Bricolage SF3')
-    print('area={}, width={}/{}, height={}/{}'.format(area, width, width / cc, height, height / cc))
+    # print('mr.Bricolage SF3')
+    # print('area={}, width={}/{}, height={}/{}'.format(area, width, width / cc, height, height / cc))
 
     r = Zone(a, 82.0, 80.0, t)
 
