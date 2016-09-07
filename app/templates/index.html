@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<html>
+<head>
+    <style>
+        table {
+            width:70%;
+            font-family:sans-serif;
+            font-size:10pt;
+            background-color:navy;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+        table#t01 tr:nth-child(even) {
+            background-color: #eee;
+        }
+        table#t01 tr:nth-child(odd) {
+           background-color:#fff;
+        }
+        table#t01 th	{
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<br>
+
+<div class="folium-map" id="map_heatmap" ></div>
+
+</body>
+
+    <script>
+
+        var southWest = L.latLng(-90, -180);
+        var northEast = L.latLng(90, 180);
+        var bounds = L.latLngBounds(southWest, northEast);
+
+        var map_heatmap = L.map('map_heatmap', {
+                                       center:[42.6241057823,23.3537380008],
+                                       zoom: 19,
+                                       maxBounds: bounds,
+                                       layers: [],
+                                       crs: L.CRS.EPSG3857
+                                     });
+        L.control.scale().addTo(map_heatmap);
+
+        var tile_layer_b05ce28bddb54d3fa2ecb0e035b91302 = L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                maxZoom: 21,
+                minZoom: 1,
+                attribution: 'Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+                detectRetina: true
+                }
+            ).addTo(map_heatmap);
+
+        var heat_map_points = L.heatLayer(
+            [
+                {% if points %}
+                {% for p in points %}
+                    [ {{ p[0] }}, {{ p[1] }}, {{ p[2] }}],
+                {% endfor %}
+                {% endif %}
+            ],
+            {
+                minOpacity: 0.5,
+                maxZoom: 18,
+                max: 1.0,
+                radius: 25,
+                blur: 15,
+                gradient: null
+                })
+            .addTo(map_heatmap);
+
+    </script>
+
+
+    <script type="text/JavaScript">
+
+       function timedRefresh(timeoutPeriod) {
+           setTimeout("location.reload(true);",timeoutPeriod);
+       }
+
+       window.onload = timedRefresh(10000);
+
+    </script>
+
+</html>
+
+{% endblock %}
