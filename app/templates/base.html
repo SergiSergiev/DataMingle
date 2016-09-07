@@ -1,15 +1,7 @@
 <html>
     <head>
         <title>ShopUp Heatmap Demo</title>
-        <style>
-            img.center
-            {
-                width: 40%;
-                display: block;
-                margin-left: auto;
-                margin-right: auto
-            }
-        </style>
+
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
@@ -51,18 +43,15 @@
 
         <style> #map_heatmap {
                 position : relative;
-                width : 90.0%;
-                height: 80.0%;
+                width : 100.0%;
+                height: 100.0%;
                 margin-left: auto;
                 margin-right: auto;
                 }
         </style>
 
-
     </head>
     <body>
-        <img class='center' src="{{ url_for('static', filename='img/logo_wp_2.png') }}" alt="ShopUp">
-
         {% block content %}{% endblock %}
     </body>
 </html>

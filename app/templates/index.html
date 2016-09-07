@@ -3,13 +3,8 @@
 {% block content %}
 
 <html>
-<body>
 
-<br>
-
-<div class="folium-map" id="map_heatmap" ></div>
-
-</body>
+    <div class="folium-map" id="map_heatmap" ></div>
 
     <script>
 
@@ -53,17 +48,6 @@
                 gradient: null
                 })
             .addTo(map_heatmap);
-
-    </script>
-
-
-    <script type="text/JavaScript">
-
-       function timedRefresh(timeoutPeriod) {
-           setTimeout("location.reload(true);",timeoutPeriod);
-       }
-
-       window.onload = timedRefresh(10000);
 
     </script>
 
