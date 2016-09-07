@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
-from flask import render_template, request, session, redirect, url_for
+from flask import render_template, request, session
 from werkzeug.contrib.cache import SimpleCache
 from app import app
 from datetime import datetime, time
@@ -30,7 +29,7 @@ class cached(object):
         return decorator
 
 
-def compute_heatmap(start_date, current_hour, integration_interval):
+def compute_heatmap(start_date, current_hour):
 
     sensors_ids = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
     sensor_points = load_sensor_locations(sensors_ids)
@@ -40,7 +39,7 @@ def compute_heatmap(start_date, current_hour, integration_interval):
     borders = bricolage.get_borders()
 
     start_date_time = datetime.combine(start_date, time(current_hour, 0, 0))
-    end_date_time = datetime.combine(start_date, time(current_hour + integration_interval, 0, 0))
+    end_date_time = datetime.combine(start_date, time(current_hour, 59, 0))
 
     db_records = load_data(sensors_ids, start_date_time, end_date_time)
 
@@ -77,7 +76,23 @@ def compute_heatmap(start_date, current_hour, integration_interval):
     return heat
 
 
-def compute_headmap_from_session(auto_increment):
+@app.route('/', methods=['GET'])
+@app.route('/index', methods=['GET'])
+def index():
+    date_string = request.args.get('date', None)
+    if date_string is not None:
+        try:
+            session['start_date'] = datetime.strptime(date_string, "%Y-%m-%d")
+        except ValueError as val_err:
+            print('{}, {}'.format(val_err, date_string))
+
+    hour_sting = request.args.get('time', None)
+    if hour_sting is not None:
+        try:
+            session['current_hour'] = int(hour_sting)
+        except Exception as ex:
+            print('{}: {}'.format(ex, hour_sting))
+
     start_date = session.get('start_date', None)
     if start_date is None:
         start_date = datetime.strptime('2016-08-12', "%Y-%m-%d")
@@ -86,41 +101,10 @@ def compute_headmap_from_session(auto_increment):
     if current_hour is None:
         current_hour = 8
 
-    if current_hour > 22:
-        current_hour = 8
+    heat = compute_heatmap(start_date, current_hour)
 
-    heat = compute_heatmap(start_date, current_hour, 1)
-    if auto_increment:
-        current_hour += 1
-        session['current_hour'] = current_hour
+    current_hour += 1
+    session['current_hour'] = current_hour
 
     return render_template("index.html", points=heat)
-
-
-@app.route('/date/<date_string>', methods=['GET', 'POST'])
-def page_date(date_string):
-    if request.method == 'POST':
-        try:
-            session['start_date'] = datetime.strptime(date_string, "%Y-%m-%d")
-        except ValueError as val_err:
-            print('{}, {}'.format(val_err, date_string))
-
-    return redirect(url_for('index'))
-
-
-@app.route('/time/<current_hour>', methods=['GET', 'POST'])
-def page_time(current_hour):
-    if request.method == 'POST':
-        try:
-            session['current_hour'] = current_hour
-        except Exception as ex:
-            print('{}: {}'.format(ex, current_hour))
-
-    return redirect(url_for('index'))
-
-
-@app.route('/', methods=['GET'])
-@app.route('/index', methods=['GET'])
-def index():
-    return compute_headmap_from_session(True)
 
