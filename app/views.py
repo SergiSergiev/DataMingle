@@ -89,7 +89,10 @@ def index():
     hour_sting = request.args.get('time', None)
     if hour_sting is not None:
         try:
-            session['current_hour'] = int(hour_sting)
+            current_hour = int(hour_sting)
+            if current_hour > 23:
+                current_hour = 23
+            session['current_hour'] = current_hour
         except Exception as ex:
             print('{}: {}'.format(ex, hour_sting))
 
@@ -99,6 +102,9 @@ def index():
 
     current_hour = session.get('current_hour', None)
     if current_hour is None:
+        current_hour = 8
+
+    if current_hour > 23:
         current_hour = 8
 
     heat = compute_heatmap(start_date, current_hour)
