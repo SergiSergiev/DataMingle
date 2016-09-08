@@ -70,7 +70,8 @@ def segregate_median(data_table):
 def trilaterate(stations_dict, sensor_points):
     circles = []
     gathered = []
-    size_2 = 0
+    size_2_1 = 0
+    size_2_2 = 0
     num_sensors_dict = {}
     for station_frame in stations_dict:
         station_frame_dict = stations_dict[station_frame]
@@ -90,7 +91,7 @@ def trilaterate(stations_dict, sensor_points):
             p = c0.intersect(c1)
             circles.append([c0, c1])
             if p:
-                size_2 += 1
+                size_2_1 += 1
                 gathered.append(p)
 
         if size >= 3:
@@ -99,6 +100,7 @@ def trilaterate(stations_dict, sensor_points):
                 s = Sensor(sensor_points[sensor_id], rssi)
                 sensors.append(s)
 
+            cross = None
             for subset in itertools.combinations(sensors, 3):
                 p1, p2, p3 = map(lambda x: x, subset)
                 cross = p1.trilaterate(p2, p3)
@@ -109,11 +111,24 @@ def trilaterate(stations_dict, sensor_points):
                 else:
                     pass
 
+            if cross is None:
+                for subset in itertools.combinations(sensors, 2):
+                    c0, c1 = map(lambda x: x, subset)
+                    p = c0.intersect(c1)
+                    circles.append([c0, c1])
+                    if p:
+                        size_2_2 += 1
+                        gathered.append(p)
+                        break
+                    else:
+                        pass
+
     for sensors, count in num_sensors_dict.items():
         print('{:10} stations seen by {:2} sensors'.format(count, sensors))
 
-    print('{:10} coordinates from  2 sensors'.format(size_2))
-    print('{:10} coordinates from  3 sensors'.format(len(gathered) - size_2))
+    print('{:10} coordinates from  2 sensors\''.format(size_2_1))
+    print('{:10} coordinates from  2 sensors\"'.format(size_2_2))
+    print('{:10} coordinates from  3 sensors'.format(len(gathered) - size_2_1 - size_2_2))
 
     return circles, gathered
 
