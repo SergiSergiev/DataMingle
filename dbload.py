@@ -9,15 +9,17 @@
 
 import socket
 import sys
-
+import platform
 import pyhdb
 
 from gridgen import Point
 
 
 def load_data(sensor_installation, start_date_time, end_date_time):
+    host_name = platform.node()
+    host = "127.0.0.1" if host_name == 'sid-hdb' else "52.58.251.227"
     try:
-        db_connection = pyhdb.connect(host="52.58.251.227", port=30015, user='SYSTEM', password='a5_hS3aZ#')
+        db_connection = pyhdb.connect(host=host, port=30015, user='SYSTEM', password='a5_hS3aZ#')
         db_cursor = db_connection.cursor()
     except socket.error as why:
         print(why)
@@ -44,8 +46,10 @@ def load_data(sensor_installation, start_date_time, end_date_time):
 
 
 def load_sensor_locations(sensors):
+    host_name = platform.node()
+    host = "127.0.0.1" if host_name == 'sid-hdb' else "52.58.251.227"
     try:
-        db_connection = pyhdb.connect(host="52.58.251.227", port=30015, user='SYSTEM', password='a5_hS3aZ#')
+        db_connection = pyhdb.connect(host=host, port=30015, user='SYSTEM', password='a5_hS3aZ#')
         db_cursor = db_connection.cursor()
     except socket.error as why:
         print(why)
