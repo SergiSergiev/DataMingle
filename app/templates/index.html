@@ -31,13 +31,22 @@
                 }
             ).addTo(map_heatmap);
 
-        var heat_map_points = L.heatLayer(
+        {% if circles %}
+            {% for c in circles %}
+                var circle = L.circle([{{ c.p.lat }}, {{ c.p.lon }}], {{ c.r }}, {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.2
+                }).addTo(map_heatmap);
+            {% endfor %}
+        {% endif %}
+
+        {% if points %}
+            var heat_map_points = L.heatLayer(
             [
-                {% if points %}
                 {% for p in points %}
                     [ {{ p[0] }}, {{ p[1] }}, {{ p[2] }}],
                 {% endfor %}
-                {% endif %}
             ],
             {
                 minOpacity: 0.5,
@@ -48,8 +57,18 @@
                 gradient: null
                 })
             .addTo(map_heatmap);
+        {% endif %}
 
     </script>
+
+    {% if auto_refresh %}
+        <script type="text/JavaScript">
+            function timedRefresh(timeoutPeriod) {
+                setTimeout("location.reload(true);",timeoutPeriod);
+            }
+            window.onload = timedRefresh(1000);
+        </script>
+    {% endif %}
 
 </html>
 

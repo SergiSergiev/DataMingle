@@ -68,6 +68,7 @@ def segregate_median(data_table):
 
 
 def trilaterate(stations_dict, sensor_points):
+    circles = []
     gathered = []
     size_2 = 0
     num_sensors_dict = {}
@@ -87,6 +88,7 @@ def trilaterate(stations_dict, sensor_points):
 
             c0, c1 = map(lambda x: x, sensors)
             p = c0.intersect(c1)
+            circles.append([c0, c1])
             if p:
                 size_2 += 1
                 gathered.append(p)
@@ -100,6 +102,7 @@ def trilaterate(stations_dict, sensor_points):
             for subset in itertools.combinations(sensors, 3):
                 p1, p2, p3 = map(lambda x: x, subset)
                 cross = p1.trilaterate(p2, p3)
+                circles.append([p1, p2, p3])
                 if cross:
                     gathered.append(cross)
                     break
@@ -112,7 +115,7 @@ def trilaterate(stations_dict, sensor_points):
     print('{:10} coordinates from  2 sensors'.format(size_2))
     print('{:10} coordinates from  3 sensors'.format(len(gathered) - size_2))
 
-    return gathered
+    return circles, gathered
 
 
 def round_seconds(data_table, approx_in_sec):

@@ -60,7 +60,7 @@ def main():
         adjusted = []
         outside = []
         sensor_frames = segregate_average(round_by_sec)
-        coordinates = trilaterate(sensor_frames, sensor_points)
+        _, coordinates = trilaterate(sensor_frames, sensor_points)
         for point in coordinates:
             point_fit = False
             for zone in zones:
