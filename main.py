@@ -29,8 +29,8 @@ def choose_date(prompt_sting):
 def main():
     sensors_ids = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
     sensor_points = load_sensor_locations(sensors_ids)
-    approx_in_secs = 10
-    integration_interval = 1  # hours
+    approx_in_secs = 5
+    integration_interval = 24  # hours
     use_pickle = False
 
     venue_name = 'bricolage'
@@ -59,7 +59,7 @@ def main():
 
         adjusted = []
         outside = []
-        sensor_frames = segregate_average(round_by_sec)
+        sensor_frames = segregate_average(round_by_sec) # some errors see the comments in he filltering.py
         _, coordinates = trilaterate(sensor_frames, sensor_points)
         for point in coordinates:
             point_fit = False
@@ -72,7 +72,9 @@ def main():
                 outside.append(point)
 
         print("{:10} coordinates".format(len(coordinates)))
+        print("{:.2f} % from all frames".format(len(coordinates)/len(sensor_frames)*100))
         print("{:10} adjusted coordinates".format(len(adjusted)))
+        print("{:.2f} % from all frames".format(len(adjusted)/len(sensor_frames)*100))
         print('{:10} points outside the grid'.format(len(outside)))
         if not len(adjusted):
             continue

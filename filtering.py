@@ -3,9 +3,11 @@ from statistics import median
 from gridgen import Sensor
 
 
-def segregate_average(data_table):
+def segregate_average(data_table):   # function don't working properly for more than 2 record example:
+                                      # 10,15,20 - gives 16.25 not 15
+                                      # probably dict is not a good approach maybe list
+                                      # add counter and devide based on it or use the example below with list
     stations_dict = {}
-    # (source, date_time, sensor_id, rssi)
     for n in data_table:
         source = n[0]
         date_time = n[1]
@@ -125,10 +127,14 @@ def trilaterate(stations_dict, sensor_points):
 
     for sensors, count in num_sensors_dict.items():
         print('{:10} stations seen by {:2} sensors'.format(count, sensors))
+        print('{:.2f} % seen by {:2} sensors'.format(count/len(stations_dict)*100, sensors))
 
     print('{:10} coordinates from  2 sensors\''.format(size_2_1))
+    print('{:.2f} % of all from  2 sensors\''.format(size_2_1/len(stations_dict)*100))
     print('{:10} coordinates from  2 sensors\"'.format(size_2_2))
+    print('{:.2f} % of all from  2 sensors\"'.format(size_2_2/len(stations_dict)*100))
     print('{:10} coordinates from  3 sensors'.format(len(gathered) - size_2_1 - size_2_2))
+    print('{:.2f} % of all from  3 sensors\''.format((len(gathered) - size_2_1 - size_2_2)/len(stations_dict)*100))
 
     return circles, gathered
 
