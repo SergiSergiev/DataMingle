@@ -72,11 +72,11 @@ if __name__ == '__main__':
         Point(cc * 1.0, cc * 5.5),  # 3
         Point(cc * 3.5, cc * 6.9),  # 4
         Point(cc * 5.0, cc * 7.0),  # 5
-        Point(cc * 5.0, cc * 4.8),  # 6
-        Point(cc * 7.5, cc * 4.6),  # 7
-        Point(cc * 7.0, cc * 3.0),  # 8
+        Point(cc * 4.8, cc * 4.6),  # 6
+        Point(cc * 7.5, cc * 5.0),  # 7
+        Point(cc * 7.2, cc * 2.5),  # 8
         Point(cc * 4.5, cc * 2.0),  # 9
-        Point(cc * 4.0, cc * 0.0)]  # 10
+        Point(cc * 5.0, cc * 0.0)]  # 10
 
     for s in sensors:
         n = a.offset(s.lon, s.lat)
