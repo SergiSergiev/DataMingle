@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 import bricolage
 import os, pickle
 from filtering import trilaterate, round_seconds, segregate_average, segregate_average_session
-from dbload import load_data, load_sensor_locations
+from dbload import load_samples, load_sensor_locations
 from vizualization import vizualization, vizualize_devices
 from pprint import pprint
 import matplotlib.pyplot as plt
@@ -36,38 +36,23 @@ def choose_date(prompt_sting):
 def main():
     sensors_ids = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
     sensor_points = load_sensor_locations(sensors_ids)
-    approx_in_secs = 4
+    approx_in_secs = 5
     integration_interval = 1  # hours
-    use_pickle = False
 
-    venue_name = 'bricolage'
     zones = bricolage.get_zones(10, 10)
     borders = bricolage.get_borders()
     start_date = choose_date("choose date")
 
-    for hour in range(10, 22, integration_interval):
+    for hour in range(0, 23, integration_interval):
 
-        start_date_time = start_date + timedelta(hours=hour)
-        end_date_time = start_date + timedelta(hours=hour + integration_interval, minutes=59)
-
-        pickle_file_name = venue_name + '.pickle'
-        if use_pickle and os.path.exists(pickle_file_name):
-            with open(venue_name + '.pickle', "rb") as pickle_file:
-                db_records = pickle.load(pickle_file)
-        else:
-            db_records = load_data(sensors_ids, start_date_time, end_date_time)
-            if use_pickle:
-                with open(pickle_file_name, "wb") as pickle_file:
-                    pickle.dump(db_records, pickle_file)
-
-        print('{:10} database records'.format(len(db_records)))
-
+        db_records = load_samples(start_date, hour, sensors_ids)
         round_by_sec = round_seconds(db_records, approx_in_secs)
+        start_date_time = start_date + timedelta(hours=hour)
 
         adjusted = []
         outside = []
-        sensor_frames = segregate_average_session(round_by_sec) # some errors see the comments in he filltering.py
-        vizualize_devices(sensor_frames)
+        sensor_frames = segregate_average(round_by_sec) # some errors see the comments in he filltering.py
+        #vizualize_devices(sensor_frames)
         #pprint(sensor_frames)
 
 
@@ -82,6 +67,7 @@ def main():
                     adjusted.append(zone)
             if not point_fit:
                 outside.append(point)
+
 
         print("{:10} ({:.3f}%) coordinates & % of all frames".format(len(coordinates), len(coordinates)/len(sensor_frames)*100))
         print("{:10} ({:.3f}%) adjusted coordinates & % of all frames".format(len(adjusted), len(adjusted)/len(sensor_frames)*100))
@@ -106,8 +92,6 @@ def main():
             # print(z)
 
         vizualization(heat, file_name, [borders.a, borders.b, borders.c, borders.d])
-
-
 
 if __name__ == '__main__':
     try:
