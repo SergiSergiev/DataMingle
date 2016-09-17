@@ -26,7 +26,36 @@ def segregate_average(data_table):   # function don't working properly for more 
         except KeyError:
             stations_dict[(source, date_time)] = {sensor_id: rssi}
 
-    print('{:10} station-time frames'.format(len(stations_dict)))
+    print('{:10} ({:.2f}%) station-time frames aand % of all'.format(len(stations_dict), len(stations_dict)/len(data_table)*100))
+    return stations_dict
+
+def segregate_average_session(data_table):
+
+# function don't working properly for more than 2 record example:  # 10,15,20 - gives 16.25 not 15
+# probably dict is not a good approach maybe list
+# add counter and devide based on it or use the example below with list
+
+    stations_dict = {}
+    for n in data_table:
+        source = n[0]
+        date_time = n[1]
+        sensor_id = n[2]
+        rssi = n[3]
+
+        try:
+            station_frame_dict = stations_dict[(source)]
+            try:
+                old_rssi = station_frame_dict[sensor_id]
+                station_frame_dict[(date_time, sensor_id)] = ( (old_rssi + rssi) / 2)
+            except TypeError:
+                pass
+            except KeyError:
+                station_frame_dict[(date_time, sensor_id)] = (rssi)
+        except KeyError:
+            stations_dict[(source)] = {(date_time,sensor_id) : rssi}
+
+    print('{:10} ({:.2f}%) station-time frames aand % of all'.format(len(stations_dict),
+                                                                     len(stations_dict) / len(data_table) * 100))
     return stations_dict
 
 
@@ -126,15 +155,13 @@ def trilaterate(stations_dict, sensor_points):
                         pass
 
     for sensors, count in num_sensors_dict.items():
-        print('{:10} stations seen by {:2} sensors'.format(count, sensors))
-        print('{:.2f} % seen by {:2} sensors'.format(count/len(stations_dict)*100, sensors))
+        print('{:10} ({:.2f})No stations and % seen by {:2} sensors'.format(count, count/len(stations_dict)*100, sensors))
 
-    print('{:10} coordinates from  2 sensors\''.format(size_2_1))
-    print('{:.2f} % of all from  2 sensors\''.format(size_2_1/len(stations_dict)*100))
-    print('{:10} coordinates from  2 sensors\"'.format(size_2_2))
-    print('{:.2f} % of all from  2 sensors\"'.format(size_2_2/len(stations_dict)*100))
-    print('{:10} coordinates from  3 sensors'.format(len(gathered) - size_2_1 - size_2_2))
-    print('{:.2f} % of all from  3 sensors\''.format((len(gathered) - size_2_1 - size_2_2)/len(stations_dict)*100))
+    print('{:10} ({:.2f}) No coordinates and % from  2 sensors\''.format(size_2_1, size_2_1/len(stations_dict)*100))
+    print('{:10} ({:.2f}) No coordinates and % from  2 sensors\"'.format(size_2_2, size_2_2/len(stations_dict)*100))
+    print('{:10} ({:.2f}) No coordinates and % from  3 sensors'.format(len(gathered) - size_2_1 - size_2_2,
+                                                                       (len(gathered) - size_2_1 - size_2_2)/len(stations_dict)*100))
+
 
     return circles, gathered
 

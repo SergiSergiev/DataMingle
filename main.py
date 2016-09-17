@@ -2,6 +2,10 @@
 1. Load device record from all sensors ordered by TS + identificator(krasi) - 3 % - Krasi
 2. Define time_frame TF - Set or list
 3. Gather sensor records per TF - list or Dict
+4. Define sessions
+5. Observe sessions results - probably visualization on matplotlip based on timeframe and sensors
+
+
 4. Compute coordinates - x1, y1, p1, ts, x2, y2, p2
 5. Convert to geo-coordinates
 6. Save on DB
@@ -11,9 +15,12 @@ from datetime import datetime, timedelta
 
 import bricolage
 import os, pickle
-from filtering import trilaterate, round_seconds, segregate_average
+from filtering import trilaterate, round_seconds, segregate_average, segregate_average_session
 from dbload import load_data, load_sensor_locations
-from vizualization import vizualization
+from vizualization import vizualization, vizualize_devices
+from pprint import pprint
+import matplotlib.pyplot as plt
+
 
 
 def choose_date(prompt_sting):
@@ -29,8 +36,8 @@ def choose_date(prompt_sting):
 def main():
     sensors_ids = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
     sensor_points = load_sensor_locations(sensors_ids)
-    approx_in_secs = 5
-    integration_interval = 24  # hours
+    approx_in_secs = 4
+    integration_interval = 1  # hours
     use_pickle = False
 
     venue_name = 'bricolage'
@@ -38,7 +45,7 @@ def main():
     borders = bricolage.get_borders()
     start_date = choose_date("choose date")
 
-    for hour in range(8, 22, integration_interval):
+    for hour in range(10, 22, integration_interval):
 
         start_date_time = start_date + timedelta(hours=hour)
         end_date_time = start_date + timedelta(hours=hour + integration_interval, minutes=59)
@@ -59,7 +66,12 @@ def main():
 
         adjusted = []
         outside = []
-        sensor_frames = segregate_average(round_by_sec) # some errors see the comments in he filltering.py
+        sensor_frames = segregate_average_session(round_by_sec) # some errors see the comments in he filltering.py
+        vizualize_devices(sensor_frames)
+        #pprint(sensor_frames)
+
+
+
         _, coordinates = trilaterate(sensor_frames, sensor_points)
         for point in coordinates:
             point_fit = False
@@ -71,11 +83,9 @@ def main():
             if not point_fit:
                 outside.append(point)
 
-        print("{:10} coordinates".format(len(coordinates)))
-        print("{:.2f} % from all frames".format(len(coordinates)/len(sensor_frames)*100))
-        print("{:10} adjusted coordinates".format(len(adjusted)))
-        print("{:.2f} % from all frames".format(len(adjusted)/len(sensor_frames)*100))
-        print('{:10} points outside the grid'.format(len(outside)))
+        print("{:10} ({:.3f}%) coordinates & % of all frames".format(len(coordinates), len(coordinates)/len(sensor_frames)*100))
+        print("{:10} ({:.3f}%) adjusted coordinates & % of all frames".format(len(adjusted), len(adjusted)/len(sensor_frames)*100))
+        print('{:10} ({:.3f}%) points outside the grid & % coordinates'.format(len(outside), len(outside)/len(coordinates)*100))
         if not len(adjusted):
             continue
 
@@ -96,6 +106,7 @@ def main():
             # print(z)
 
         vizualization(heat, file_name, [borders.a, borders.b, borders.c, borders.d])
+
 
 
 if __name__ == '__main__':
