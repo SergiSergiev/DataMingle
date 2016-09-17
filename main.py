@@ -72,9 +72,9 @@ def main():
                 outside.append(point)
 
         print("{:10} coordinates".format(len(coordinates)))
-        print("{:.2f} % from all frames".format(len(coordinates)/len(sensor_frames)*100))
+        print("{:10.2f} % from all frames".format(len(coordinates)/len(sensor_frames)*100))
         print("{:10} adjusted coordinates".format(len(adjusted)))
-        print("{:.2f} % from all frames".format(len(adjusted)/len(sensor_frames)*100))
+        print("{:10.2f} % from all frames".format(len(adjusted)/len(sensor_frames)*100))
         print('{:10} points outside the grid'.format(len(outside)))
         if not len(adjusted):
             continue

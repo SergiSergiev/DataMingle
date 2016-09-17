@@ -127,14 +127,14 @@ def trilaterate(stations_dict, sensor_points):
 
     for sensors, count in num_sensors_dict.items():
         print('{:10} stations seen by {:2} sensors'.format(count, sensors))
-        print('{:.2f} % seen by {:2} sensors'.format(count/len(stations_dict)*100, sensors))
+        print('{:10.2f} % seen by {:2} sensors'.format(count/len(stations_dict)*100, sensors))
 
     print('{:10} coordinates from  2 sensors\''.format(size_2_1))
-    print('{:.2f} % of all from  2 sensors\''.format(size_2_1/len(stations_dict)*100))
+    print('{:10.2f} % of all from  2 sensors\''.format(size_2_1/len(stations_dict)*100))
     print('{:10} coordinates from  2 sensors\"'.format(size_2_2))
-    print('{:.2f} % of all from  2 sensors\"'.format(size_2_2/len(stations_dict)*100))
+    print('{:10.2f} % of all from  2 sensors\"'.format(size_2_2/len(stations_dict)*100))
     print('{:10} coordinates from  3 sensors'.format(len(gathered) - size_2_1 - size_2_2))
-    print('{:.2f} % of all from  3 sensors\''.format((len(gathered) - size_2_1 - size_2_2)/len(stations_dict)*100))
+    print('{:10.2f} % of all from  3 sensors\''.format((len(gathered) - size_2_1 - size_2_2)/len(stations_dict)*100))
 
     return circles, gathered
 
