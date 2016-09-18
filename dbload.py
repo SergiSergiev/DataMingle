@@ -49,9 +49,11 @@ def load_data(sensor_installation, start_date_time, end_date_time):
         sys.exit(1)
 
 
-def load_samples(start_date, current_hour, sensors_ids):
+def load_samples(start_date, current_hour, integration_interval, sensors_ids):
     db_records = None
-    db_file_name = 'db-{}-{}.pickle'.format(str(start_date.date()), str(current_hour))
+    db_file_name = 'db-{}-{}-{}.pickle'.format(str(start_date.date()),
+                                               str(current_hour),
+                                               str(integration_interval))
 
     dir_temp = 'tmp'
     if not os.path.exists(dir_temp):
@@ -66,11 +68,12 @@ def load_samples(start_date, current_hour, sensors_ids):
     except FileNotFoundError:
         pass
 
-    print('{}'.format(datetime.combine(start_date, time(current_hour, 0, 0))))
+    start_date_time = datetime.combine(start_date, time(current_hour, 0, 0))
+    print('{} and {} hours interval'.format(start_date_time, str(integration_interval)))
 
     if db_records is None:
-        start_date_time = datetime.combine(start_date, time(current_hour, 0, 0))
-        end_date_time = datetime.combine(start_date, time(current_hour, 59, 0))
+        end_hour = current_hour + integration_interval - 1
+        end_date_time = datetime.combine(start_date, time(end_hour, 59, 0))
         db_records = load_data(sensors_ids, start_date_time, end_date_time)
         with open(db_records_name, 'wb') as pickle_file:
             pickle.dump(db_records, pickle_file)

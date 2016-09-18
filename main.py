@@ -14,13 +14,12 @@
 from datetime import datetime, timedelta
 
 import bricolage
-import os, pickle
+import os
 from filtering import trilaterate, round_seconds, segregate_average, segregate_average_session
 from dbload import load_samples, load_sensor_locations
 from vizualization import vizualization, vizualize_devices
 from pprint import pprint
 import matplotlib.pyplot as plt
-
 
 
 def choose_date(prompt_sting):
@@ -37,25 +36,24 @@ def main():
     sensors_ids = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
     sensor_points = load_sensor_locations(sensors_ids)
     approx_in_secs = 5
-    integration_interval = 1  # hours
+    integration_interval = 24  # hours
 
     zones = bricolage.get_zones(10, 10)
     borders = bricolage.get_borders()
     start_date = choose_date("choose date")
+    max_hour = 24 - integration_interval + 1
 
-    for hour in range(0, 23, integration_interval):
+    for start_hour in range(0, max_hour, integration_interval):
 
-        db_records = load_samples(start_date, hour, sensors_ids)
+        db_records = load_samples(start_date, start_hour, integration_interval, sensors_ids)
         round_by_sec = round_seconds(db_records, approx_in_secs)
-        start_date_time = start_date + timedelta(hours=hour)
+        start_date_time = start_date + timedelta(hours=start_hour)
 
         adjusted = []
         outside = []
-        sensor_frames = segregate_average(round_by_sec) # some errors see the comments in he filltering.py
+        sensor_frames = segregate_average(round_by_sec)	# some errors see the comments in he filltering.py
         #vizualize_devices(sensor_frames)
         #pprint(sensor_frames)
-
-
 
         _, coordinates = trilaterate(sensor_frames, sensor_points)
         for point in coordinates:
@@ -68,10 +66,13 @@ def main():
             if not point_fit:
                 outside.append(point)
 
+        try:
+            print("{:10} ({:.3f}%) coordinates & % of all frames".format(len(coordinates), len(coordinates)/len(sensor_frames)*100))
+            print("{:10} ({:.3f}%) adjusted coordinates & % of all frames".format(len(adjusted), len(adjusted)/len(sensor_frames)*100))
+            print('{:10} ({:.3f}%) points outside the grid & % coordinates'.format(len(outside), len(outside)/len(coordinates)*100))
+        except ZeroDivisionError:
+           pass
 
-        print("{:10} ({:.3f}%) coordinates & % of all frames".format(len(coordinates), len(coordinates)/len(sensor_frames)*100))
-        print("{:10} ({:.3f}%) adjusted coordinates & % of all frames".format(len(adjusted), len(adjusted)/len(sensor_frames)*100))
-        print('{:10} ({:.3f}%) points outside the grid & % coordinates'.format(len(outside), len(outside)/len(coordinates)*100))
         if not len(adjusted):
             continue
 
