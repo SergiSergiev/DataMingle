@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 
 def choose_date(prompt_sting):
     while True:
-        now = '2016-08-10'  # input('{} {} ? '.format(prompt_sting, date.today()))
+        now = '2016-09-01'  # input('{} {} ? '.format(prompt_sting, date.today()))
         try:
             return datetime.strptime(now, '%Y-%m-%d')
         except ValueError as val_err:
@@ -36,14 +36,14 @@ def main():
     sensors_ids = (57, 58, 59, 60, 61, 62, 63, 64, 65, 66)
     sensor_points = load_sensor_locations(sensors_ids)
     approx_in_secs = 5
-    integration_interval = 24  # hours
+    integration_interval = 1  # hours
 
     zones = bricolage.get_zones(10, 10)
     borders = bricolage.get_borders()
     start_date = choose_date("choose date")
     max_hour = 24 - integration_interval + 1
 
-    for start_hour in range(0, max_hour, integration_interval):
+    for start_hour in range(23, max_hour, integration_interval):
 
         db_records = load_samples(start_date, start_hour, integration_interval, sensors_ids)
         round_by_sec = round_seconds(db_records, approx_in_secs)
@@ -52,7 +52,6 @@ def main():
         adjusted = []
         outside = []
         sensor_frames = segregate_average(round_by_sec)	# some errors see the comments in he filltering.py
-        #vizualize_devices(sensor_frames)
         #pprint(sensor_frames)
 
         _, coordinates = trilaterate(sensor_frames, sensor_points)
@@ -73,8 +72,14 @@ def main():
         except ZeroDivisionError:
            pass
 
+        vizualize_devices(sensor_frames)
+
         if not len(adjusted):
             continue
+
+
+
+
 
         # for idx, zone in enumerate(zones):
         #     print('zone {}: visited {} times'.format(idx, zone))

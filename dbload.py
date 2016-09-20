@@ -34,6 +34,7 @@ def load_data(sensor_installation, start_date_time, end_date_time):
         FROM "SHOPUP"."me.shopup.data::data"
         WHERE SENSOR_INSTALLATION_ID IN {sensors} AND
         DATE_TIME BETWEEN '{start_date_time}'  AND '{end_day_time}' AND
+        -- SOURCE = '584498eba1a3' AND
         IS_STA = 1
         ORDER BY SOURCE, DATE_TIME '''.format(sensors=sensor_installation, start_date_time=start_date_time,
                                               end_day_time=end_date_time)

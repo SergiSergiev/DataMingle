@@ -2,6 +2,7 @@ import csv
 import os
 import matplotlib.pyplot as plt
 import folium
+from pprint import pprint
 from folium import plugins
 
 
@@ -66,99 +67,117 @@ def vizualization(data, file_name, margers):
     # name = file_name + '.csv'
     # write_file(name, data)
 
-def vizualize_devices (sensor_frames) :
-    for source in sensor_frames:
-        station_frame_dict = sensor_frames[(source)]
-        session_list = []
-        session_list_1 = []
-        session_list_2 = []
-        session_list_3 = []
-        session_list_4 = []
-        session_list_5 = []
-        session_list_6 = []
-        session_list_7 = []
-        session_list_8 = []
-        session_list_9 = []
-        old_sensor_1 = None
-        old_sensor_2 = None
-        old_sensor_3 = None
-        old_sensor_4 = None
-        old_sensor_5 = None
-        old_sensor_6 = None
-        old_sensor_7 = None
-        old_sensor_8 = None
-        old_sensor_9 = None
+def sources_structured_data (sensor_frames) :
+    # pprint(sensor_frames)
+    sources_data = dict()
+    for (source, dateframe) in sensor_frames:
+        sensors_list = sensor_frames[source, dateframe]
+        try:
+            sources_data[source][dateframe] = sensors_list
 
-        # print(station_frame_dict)
-        for i, (datetime, sensor) in enumerate(station_frame_dict):
-            if i == 0 or sensor == old_sensor:
-                session_list.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor = sensor
-            elif (sensor != old_sensor and old_sensor_1 == None) or sensor == old_sensor_1:
-                session_list_1.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor_1 = sensor
-            elif (sensor != old_sensor and old_sensor_2 == None) or sensor == old_sensor_2:
-                session_list_2.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor_2 = sensor
-            elif (sensor != old_sensor and old_sensor_3 == None) or sensor == old_sensor_3:
-                session_list_3.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor_3 = sensor
-            elif (sensor != old_sensor and old_sensor_4 == None) or sensor == old_sensor_4:
-                session_list_4.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor_4 = sensor
-            elif (sensor != old_sensor and old_sensor_5 == None) or sensor == old_sensor_5:
-                session_list_5.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor_5 = sensor
-            elif (sensor != old_sensor and old_sensor_6 == None) or sensor == old_sensor_6:
-                session_list_6.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor_6 = sensor
-            elif (sensor != old_sensor and old_sensor_7 == None) or sensor == old_sensor_7:
-                session_list_7.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor_7 = sensor
-            elif (sensor != old_sensor and old_sensor_8 == None) or sensor == old_sensor_8:
-                session_list_8.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor_8 = sensor
-            elif (sensor != old_sensor and old_sensor_9 == None) or sensor == old_sensor_9:
-                session_list_9.append((sensor, datetime, station_frame_dict[datetime, sensor]))
-                old_sensor_9 = sensor
+        except KeyError:
+            sources_data[source][dateframe] = sensors_list
+    pprint(sources_data)
+    return sources_data
 
-                # print(station_frame_dict)
-                # print(station_frame_dict[datetime,sensor])
 
-        plt.xscale('linear')
-        plt.yscale('linear')
-        plt.scatter(column(session_list, 1), column(session_list, 2), label=old_sensor, color='y', s=200, marker="x")
-        if old_sensor_1 != None:
-            plt.scatter(column(session_list_1, 1), column(session_list_1, 2), label=old_sensor_1, color='b', s=200,
-                        marker="o")
-        if old_sensor_2 != None:
-            plt.scatter(column(session_list_2, 1), column(session_list_2, 2), label=old_sensor_2, color='g', s=200,
-                        marker="v")
-        if old_sensor_3 != None:
-            plt.scatter(column(session_list_3, 1), column(session_list_3, 2), label=old_sensor_3, color='r', s=200,
-                        marker="^")
-        if old_sensor_4 != None:
-            plt.scatter(column(session_list_4, 1), column(session_list_4, 2), label=old_sensor_4, color='c', s=200,
-                        marker="1")
-        if old_sensor_5 != None:
-            plt.scatter(column(session_list_5, 1), column(session_list_5, 2), label=old_sensor_5, color='m', s=200,
-                        marker="2")
-        if old_sensor_6 != None:
-            plt.scatter(column(session_list_6, 1), column(session_list_6, 2), label=old_sensor_6, color='y', s=200,
-                        marker="3")
-        if old_sensor_7 != None:
-            plt.scatter(column(session_list_7, 1), column(session_list_7, 2), label=old_sensor_7, color='k', s=200,
-                        marker="4")
-        if old_sensor_8 != None:
-            plt.scatter(column(session_list_8, 1), column(session_list_8, 2), label=old_sensor_8, color='y', s=200,
-                        marker="s")
-        if old_sensor_9 != None:
-            plt.scatter(column(session_list_9, 1), column(session_list_9, 2), label=old_sensor_9, color='b', s=200,
-                        marker="p")
-
-        plt.title(source)
-        plt.legend()
-        plt.show()
+def vizualize_devices(sensor_frames):
+    structured_data = sources_structured_data(sensor_frames)
+    for source in structured_data:
+        print(structured_data[source])
+        # dateframes=column(structured_data[source],0)
+        # print(dateframes)
+        # session_list = []
+        # session_list_1 = []
+        # session_list_2 = []
+        # session_list_3 = []
+        # session_list_4 = []
+        # session_list_5 = []
+        # session_list_6 = []
+        # session_list_7 = []
+        # session_list_8 = []
+        # session_list_9 = []
+        # old_sensor_1 = None
+        # old_sensor_2 = None
+        # old_sensor_3 = None
+        # old_sensor_4 = None
+        # old_sensor_5 = None
+        # old_sensor_6 = None
+        # old_sensor_7 = None
+        # old_sensor_8 = None
+        # old_sensor_9 = None
+        #
+        # # print(station_frame_dict)
+        # for i, values in enumerate(station_frame_dict):
+        #     print(values)
+        #     if i == 0 or sensor == old_sensor:
+        #         session_list.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor = sensor
+        #     elif (sensor != old_sensor and old_sensor_1 == None) or sensor == old_sensor_1:
+        #         session_list_1.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor_1 = sensor
+        #     elif (sensor != old_sensor and old_sensor_2 == None) or sensor == old_sensor_2:
+        #         session_list_2.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor_2 = sensor
+        #     elif (sensor != old_sensor and old_sensor_3 == None) or sensor == old_sensor_3:
+        #         session_list_3.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor_3 = sensor
+        #     elif (sensor != old_sensor and old_sensor_4 == None) or sensor == old_sensor_4:
+        #         session_list_4.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor_4 = sensor
+        #     elif (sensor != old_sensor and old_sensor_5 == None) or sensor == old_sensor_5:
+        #         session_list_5.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor_5 = sensor
+        #     elif (sensor != old_sensor and old_sensor_6 == None) or sensor == old_sensor_6:
+        #         session_list_6.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor_6 = sensor
+        #     elif (sensor != old_sensor and old_sensor_7 == None) or sensor == old_sensor_7:
+        #         session_list_7.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor_7 = sensor
+        #     elif (sensor != old_sensor and old_sensor_8 == None) or sensor == old_sensor_8:
+        #         session_list_8.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor_8 = sensor
+        #     elif (sensor != old_sensor and old_sensor_9 == None) or sensor == old_sensor_9:
+        #         session_list_9.append((sensor, datetime, station_frame_dict[datetime, sensor]))
+        #         old_sensor_9 = sensor
+        #
+        #         # print(station_frame_dict)
+        #         # print(station_frame_dict[datetime,sensor])
+        #
+        # plt.xscale('linear')
+        # plt.yscale('linear')
+        # plt.scatter(column(session_list, 1), column(session_list, 2), label=old_sensor, color='y', s=200, marker="x")
+        # if old_sensor_1 != None:
+        #     plt.scatter(column(session_list_1, 1), column(session_list_1, 2), label=old_sensor_1, color='b', s=200,
+        #                 marker="o")
+        # if old_sensor_2 != None:
+        #     plt.scatter(column(session_list_2, 1), column(session_list_2, 2), label=old_sensor_2, color='g', s=200,
+        #                 marker="v")
+        # if old_sensor_3 != None:
+        #     plt.scatter(column(session_list_3, 1), column(session_list_3, 2), label=old_sensor_3, color='r', s=200,
+        #                 marker="^")
+        # if old_sensor_4 != None:
+        #     plt.scatter(column(session_list_4, 1), column(session_list_4, 2), label=old_sensor_4, color='c', s=200,
+        #                 marker="1")
+        # if old_sensor_5 != None:
+        #     plt.scatter(column(session_list_5, 1), column(session_list_5, 2), label=old_sensor_5, color='m', s=200,
+        #                 marker="2")
+        # if old_sensor_6 != None:
+        #     plt.scatter(column(session_list_6, 1), column(session_list_6, 2), label=old_sensor_6, color='y', s=200,
+        #                 marker="3")
+        # if old_sensor_7 != None:
+        #     plt.scatter(column(session_list_7, 1), column(session_list_7, 2), label=old_sensor_7, color='k', s=200,
+        #                 marker="4")
+        # if old_sensor_8 != None:
+        #     plt.scatter(column(session_list_8, 1), column(session_list_8, 2), label=old_sensor_8, color='y', s=200,
+        #                 marker="s")
+        # if old_sensor_9 != None:
+        #     plt.scatter(column(session_list_9, 1), column(session_list_9, 2), label=old_sensor_9, color='b', s=200,
+        #                 marker="p")
+        #
+        # plt.title(source)
+        # plt.legend()
+        # plt.show()
 
 def column(matrix, i):
     return [row[i] for row in matrix]
