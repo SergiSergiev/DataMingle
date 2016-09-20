@@ -8,6 +8,8 @@ fig, ax1 = plt.subplots()
 t = np.arange(0.01, 10.0, 0.01)
 s1 = np.exp(t)
 ax1.plot(t, s1, 'b-')
+pass
+
 ax1.set_xlabel('time (s)')
 # Make the y-axis label and tick labels match the line color.
 ax1.set_ylabel('exp', color='b')
